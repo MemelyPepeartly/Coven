@@ -4,43 +4,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tardigrade.Data.Entities;
+using Coven.Data.Entities;
 
-namespace Tardigrade.Data.Repository
+namespace Coven.Data.Repository
 {
     public class Repository : IRepository
     {
-        private readonly TardigradeDbContext TardigradeContext;
+        private readonly CovenDbContext CovenContext;
 
-        public Repository(TardigradeDbContext _TardigradeContext)
+        public Repository(CovenDbContext _CovenContext)
         {
-            TardigradeContext = _TardigradeContext ?? throw new ArgumentNullException(nameof(_TardigradeContext));
+            CovenContext = _CovenContext ?? throw new ArgumentNullException(nameof(_CovenContext));
         }
 
         #region Create
         public async Task<Client> CreateClient(string username, string email)
         {
             Guid newUserId = Guid.NewGuid();
-            await TardigradeContext.Clients.AddAsync(new Client()
+            await CovenContext.Clients.AddAsync(new Client()
             {
                 UserId = newUserId,
                 Username = username,
                 Email = email
             });
-            await TardigradeContext.SaveChangesAsync();
+            await CovenContext.SaveChangesAsync();
 
             return await GetClient(newUserId);
         }
         public async Task<Character> CreateCharacter(Guid userId, string characterName)
         {
             Guid characterId = Guid.NewGuid();
-            await TardigradeContext.Characters.AddAsync(new Character()
+            await CovenContext.Characters.AddAsync(new Character()
             {
                 UserId = userId,
                 CharacterId = characterId,
                 CharacterName = characterName
             });
-            await TardigradeContext.SaveChangesAsync();
+            await CovenContext.SaveChangesAsync();
 
             return await GetCharacter(characterId);
         }
@@ -49,23 +49,23 @@ namespace Tardigrade.Data.Repository
         #region Read
         public async Task<List<Client>> GetClients()
         {
-            return await TardigradeContext.Clients.AsNoTracking()
+            return await CovenContext.Clients.AsNoTracking()
                 .ToListAsync();
         }
         public async Task<Client> GetClient(Guid userId)
         {
-            return await TardigradeContext.Clients.AsNoTracking()
+            return await CovenContext.Clients.AsNoTracking()
                 .FirstAsync(c => c.UserId == userId);
         }
         public async Task<List<Character>> GetAllCharacters()
         {
-            return await TardigradeContext.Characters.AsNoTracking()
+            return await CovenContext.Characters.AsNoTracking()
                 .ToListAsync();
         }
 
         public async Task<Character> GetCharacter(Guid characterId)
         {
-            return await TardigradeContext.Characters.AsNoTracking()
+            return await CovenContext.Characters.AsNoTracking()
                 .FirstAsync(c => c.CharacterId == characterId);
         }
         #endregion

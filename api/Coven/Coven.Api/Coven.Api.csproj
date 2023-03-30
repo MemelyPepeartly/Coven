@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Tardigrade.Data\Tardigrade.Data.csproj" />
-    <ProjectReference Include="..\Tardigrade.Logic\Tardigrade.Logic.csproj" />
+    <ProjectReference Include="..\Coven.Data\Coven.Data.csproj" />
+    <ProjectReference Include="..\Coven.Logic\Coven.Logic.csproj" />
   </ItemGroup>
 
 </Project>

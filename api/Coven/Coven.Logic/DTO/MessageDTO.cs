@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tardigrade.Logic.DTO
+namespace Coven.Logic.DTO
 {
     public class MessageDTO
     {

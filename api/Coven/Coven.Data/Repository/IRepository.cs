@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tardigrade.Data.Entities;
+using Coven.Data.Entities;
 
-namespace Tardigrade.Data.Repository
+namespace Coven.Data.Repository
 {
     public interface IRepository
     {

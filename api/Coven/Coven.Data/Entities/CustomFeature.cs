@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Tardigrade.Data.Entities;
+namespace Coven.Data.Entities;
 
 public partial class CustomFeature
 {

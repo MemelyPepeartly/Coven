@@ -1,6 +1,6 @@
-﻿using Tardigrade.Logic.DTO.WorldAnvil;
+﻿using Coven.Logic.DTO.WorldAnvil;
 
-namespace Tardigrade.Api.Services
+namespace Coven.Api.Services
 {
     public interface IWorldAnvilService
     {

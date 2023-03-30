@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Tardigrade.Api.Hubs;
-using Tardigrade.Logic.DTO;
+using Coven.Api.Hubs;
+using Coven.Logic.DTO;
 
-namespace Tardigrade.Api.Controllers
+namespace Coven.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

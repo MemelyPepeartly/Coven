@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Tardigrade.Data.Repository;
-using Tardigrade.Logic.Request_Models.Post;
+using Coven.Data.Repository;
+using Coven.Logic.Request_Models.Post;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Tardigrade.Api.Controllers
+namespace Coven.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

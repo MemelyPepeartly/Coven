@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tardigrade.Logic.DTO.WorldAnvil
+namespace Coven.Logic.DTO.WorldAnvil
 {
     public class ArticleDTO
     {

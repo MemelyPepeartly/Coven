@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tardigrade.Logic.Request_Models.Get
+namespace Coven.Logic.Request_Models.Get
 {
     public class GetAIResponseTestModel
     {

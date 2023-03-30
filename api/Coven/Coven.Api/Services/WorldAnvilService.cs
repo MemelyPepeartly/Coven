@@ -1,11 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using Coven.Logic.DTO.WorldAnvil;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System.Net.Http.Headers;
 using System.Text;
-using Tardigrade.Logic.DTO.WorldAnvil;
 
-namespace Tardigrade.Api.Services
+namespace Coven.Api.Services
 {
     public class WorldAnvilService : IWorldAnvilService
     {

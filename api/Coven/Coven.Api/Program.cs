@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Tardigrade.Api.Hubs;
-using Tardigrade.Api.Services;
-using Tardigrade.Data.Entities;
-using Tardigrade.Data.Repository;
+using Coven.Api.Hubs;
+using Coven.Api.Services;
+using Coven.Data.Entities;
+using Coven.Data.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
 // Database
-builder.Services.AddDbContext<TardigradeDbContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("TardigradeDB")));
+builder.Services.AddDbContext<CovenDbContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("CovenDB")));
 builder.Services.AddScoped<IRepository, Repository>();
 
 builder.Services.AddScoped<IWorldAnvilService, WorldAnvilService>();
@@ -32,7 +32,7 @@ builder.WebHost
     .UseKestrel()
     .UseContentRoot(Directory.GetCurrentDirectory())
     .UseIISIntegration()
-    .UseStartup("Tardigrade.Api")
+    .UseStartup("Coven.Api")
     .UseIISIntegration();
 
 var app = builder.Build();

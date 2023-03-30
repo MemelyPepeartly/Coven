@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Tardigrade.Api": {
+    "Coven.Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

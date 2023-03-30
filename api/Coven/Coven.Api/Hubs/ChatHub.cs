@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.SignalR;
 
-namespace Tardigrade.Api.Hubs
+namespace Coven.Api.Hubs
 {
     public class ChatHub : Hub
     {

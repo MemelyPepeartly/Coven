@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Coven.Logic.Request_Models.Get;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpenAI_API;
-using Tardigrade.Logic.Request_Models.Get;
 
-namespace Tardigrade.Api.Controllers
+namespace Coven.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

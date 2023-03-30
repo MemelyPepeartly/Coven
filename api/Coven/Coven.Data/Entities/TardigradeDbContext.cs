@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Tardigrade.Data.Entities;
+namespace Coven.Data.Entities;
 
-public partial class TardigradeDbContext : DbContext
+public partial class CovenDbContext : DbContext
 {
-    public TardigradeDbContext()
+    public CovenDbContext()
     {
     }
 
-    public TardigradeDbContext(DbContextOptions<TardigradeDbContext> options)
+    public CovenDbContext(DbContextOptions<CovenDbContext> options)
         : base(options)
     {
     }
