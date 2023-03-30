@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Coven.Data.Entities;
 
-public partial class CovenDbContext : DbContext
+public partial class CovenContext : DbContext
 {
-    public CovenDbContext()
+    public CovenContext()
     {
     }
 
-    public CovenDbContext(DbContextOptions<CovenDbContext> options)
+    public CovenContext(DbContextOptions<CovenContext> options)
         : base(options)
     {
     }
@@ -28,11 +28,12 @@ public partial class CovenDbContext : DbContext
     public virtual DbSet<Feature> Features { get; set; }
 
     public virtual DbSet<FeatureCategory> FeatureCategories { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Attribute>(entity =>
         {
-            entity.HasKey(e => e.AttributeId).HasName("PK__Attribut__03B803F0A80E5496");
+            entity.HasKey(e => e.AttributeId).HasName("PK__Attribut__03B803F0C2BD637F");
 
             entity.ToTable("Attribute", "app");
 
@@ -50,12 +51,12 @@ public partial class CovenDbContext : DbContext
             entity.HasOne(d => d.AttributeCategory).WithMany(p => p.Attributes)
                 .HasForeignKey(d => d.AttributeCategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Attribute__attri__6FE99F9F");
+                .HasConstraintName("FK__Attribute__attri__6C190EBB");
         });
 
         modelBuilder.Entity<AttributeCategory>(entity =>
         {
-            entity.HasKey(e => e.AttributeCategoryId).HasName("PK__Attribut__7CEBDAB9009328EA");
+            entity.HasKey(e => e.AttributeCategoryId).HasName("PK__Attribut__7CEBDAB96B63EABE");
 
             entity.ToTable("AttributeCategory", "app");
 
@@ -72,7 +73,7 @@ public partial class CovenDbContext : DbContext
 
         modelBuilder.Entity<Character>(entity =>
         {
-            entity.HasKey(e => e.CharacterId).HasName("PK__Characte__ADF919BFE14636D8");
+            entity.HasKey(e => e.CharacterId).HasName("PK__Characte__ADF919BF69C0AE76");
 
             entity.ToTable("Character", "app");
 
@@ -87,16 +88,16 @@ public partial class CovenDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Characters)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Character__userI__6477ECF3");
+                .HasConstraintName("FK__Character__userI__5FB337D6");
         });
 
         modelBuilder.Entity<Client>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Client__CB9A1CFFD4DC41A1");
+            entity.HasKey(e => e.UserId).HasName("PK__Client__CB9A1CFFB1E481F1");
 
             entity.ToTable("Client", "app");
 
-            entity.HasIndex(e => e.Email, "UQ__Client__AB6E6164F8B965D8").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Client__AB6E6164A6203F85").IsUnique();
 
             entity.Property(e => e.UserId)
                 .ValueGeneratedNever()
@@ -111,7 +112,7 @@ public partial class CovenDbContext : DbContext
 
         modelBuilder.Entity<CustomFeature>(entity =>
         {
-            entity.HasKey(e => e.CustomFeatureId).HasName("PK__CustomFe__FE3D3D282623FCB5");
+            entity.HasKey(e => e.CustomFeatureId).HasName("PK__CustomFe__FE3D3D28F6112E01");
 
             entity.ToTable("CustomFeature", "app");
 
@@ -126,12 +127,12 @@ public partial class CovenDbContext : DbContext
             entity.HasOne(d => d.FeatureCategory).WithMany(p => p.CustomFeatures)
                 .HasForeignKey(d => d.FeatureCategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CustomFea__featu__6B24EA82");
+                .HasConstraintName("FK__CustomFea__featu__6754599E");
         });
 
         modelBuilder.Entity<Feature>(entity =>
         {
-            entity.HasKey(e => e.FeatureId).HasName("PK__Feature__F4F118B3C120A2EF");
+            entity.HasKey(e => e.FeatureId).HasName("PK__Feature__F4F118B3E6A3718B");
 
             entity.ToTable("Feature", "app");
 
@@ -146,12 +147,12 @@ public partial class CovenDbContext : DbContext
             entity.HasOne(d => d.FeatureCategory).WithMany(p => p.Features)
                 .HasForeignKey(d => d.FeatureCategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Feature__feature__68487DD7");
+                .HasConstraintName("FK__Feature__feature__6477ECF3");
         });
 
         modelBuilder.Entity<FeatureCategory>(entity =>
         {
-            entity.HasKey(e => e.FeatureCategoryId).HasName("PK__FeatureC__B90A9A9387128806");
+            entity.HasKey(e => e.FeatureCategoryId).HasName("PK__FeatureC__B90A9A93AC60A894");
 
             entity.ToTable("FeatureCategory", "app");
 

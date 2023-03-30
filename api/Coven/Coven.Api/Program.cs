@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
 // Database
-builder.Services.AddDbContext<CovenDbContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("CovenDB")));
+builder.Services.AddDbContext<CovenContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("CovenDB")));
 builder.Services.AddScoped<IRepository, Repository>();
 
 builder.Services.AddScoped<IWorldAnvilService, WorldAnvilService>();
