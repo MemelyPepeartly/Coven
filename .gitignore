@@ -1,52 +1,28 @@
-# Prerequisites
-*.d
+## angular
+coverage/
+dist/
 
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+## docker
+dockerup*
+!dockerup.yaml
 
-# Linker output
-*.ilk
-*.map
-*.exp
+## dotnet
+.vscode/
+.vs/
+bin/
+obj/
 
-# Precompiled Headers
-*.gch
-*.pch
+appsettings.*
+!appsettings.json
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+## jekyll
+.jekyll-cache/
+.sass-cache/
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+.jekyll-metadata
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+## macos
+.DS_Store
 
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+## nodejs
+node_modules/
