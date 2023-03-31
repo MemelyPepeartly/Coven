@@ -19,7 +19,9 @@ namespace Coven.Api.Services
             WorldAnvilClient = new HttpClient();
             WorldAnvilClient.BaseAddress = new Uri("https://www.worldanvil.com/api/aragorn/");
             WorldAnvilClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
             WorldAnvilClient.DefaultRequestHeaders.Add("x-auth-token", _config["WorldAnvilToken"]);
+            WorldAnvilClient.DefaultRequestHeaders.Add("x-application-key", _config["WorldAnvilAppKey"]);
         }
         public async Task<ArticleDTO> GetArticles(Guid worldId)
         {
@@ -32,6 +34,12 @@ namespace Coven.Api.Services
             data.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             return await WorldAnvilClient.GetAsync($"world/dbd8562f-06be-4063-9f6d-e90bf89c761e");
+        }
+
+        public async Task<object> GetUser()
+        {
+            var user = await WorldAnvilClient.GetAsync(WorldAnvilClient.BaseAddress + "user");
+            return user;
         }
     }
 }

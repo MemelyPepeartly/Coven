@@ -10,9 +10,9 @@ namespace Coven.Data.Repository
 {
     public class Repository : IRepository
     {
-        private readonly CovenDbContext CovenContext;
+        private readonly CovenContext CovenContext;
 
-        public Repository(CovenDbContext _CovenContext)
+        public Repository(CovenContext _CovenContext)
         {
             CovenContext = _CovenContext ?? throw new ArgumentNullException(nameof(_CovenContext));
         }

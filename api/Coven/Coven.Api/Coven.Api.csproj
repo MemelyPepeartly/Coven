@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Coven.Logic\Coven.Logic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Hubs\" />
+  </ItemGroup>
+
 </Project>

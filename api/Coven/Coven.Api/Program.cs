@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Coven.Api.Hubs;
 using Coven.Api.Services;
 using Coven.Data.Entities;
 using Coven.Data.Repository;
@@ -53,6 +52,5 @@ app.UseAuthorization();
 
 app.UseCors("CorsPolicy");
 app.MapControllers();
-app.MapHub<ChatHub>("/ChatHub");
 
 app.Run();
