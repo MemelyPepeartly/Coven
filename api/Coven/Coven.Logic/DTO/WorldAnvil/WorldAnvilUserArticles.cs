@@ -15,6 +15,6 @@ namespace Coven.Logic.DTO.WorldAnvil
         public string offset { get; set; }
         public string order_by { get; set; }
         public string trajectory { get; set; }
-        public List<Article> articles { get; set; }
+        public List<UserWorldArticleMeta> articles { get; set; }
     }
 }
