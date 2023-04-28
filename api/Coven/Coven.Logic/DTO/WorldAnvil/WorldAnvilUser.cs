@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Coven.Logic.DTO.WorldAnvil
 {
-    public class WorldDTO
+    public class WorldAnvilUser
     {
-        public List<ArticleDTO> articles { get; set; } 
+        public Guid id { get; set; }
+        public string username { get; set; }
+        public string url { get; set; }
     }
 }

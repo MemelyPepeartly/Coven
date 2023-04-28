@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Coven.Logic.Request_Models.Get
+namespace Coven.Logic.DTO.WorldAnvil
 {
-    public class WorldAnvilWorld
+    public class WorldAnvilUserWorlds
     {
         public Guid id { get; set; }
         public string username { get; set; }

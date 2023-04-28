@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Coven.Logic.DTO.WorldAnvil
 {
-    public class ArticleDTO
+    public class WorldAnvilUserArticles
     {
+        public World MyProperty { get; set; }
     }
 }
