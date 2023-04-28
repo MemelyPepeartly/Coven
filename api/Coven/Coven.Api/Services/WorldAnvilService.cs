@@ -44,13 +44,13 @@ namespace Coven.Api.Services
             return worlds;
         }
 
-        public async Task<WorldAnvilUser> GetUser()
+        public async Task<Author> GetUser()
         {
-            WorldAnvilUser user = new WorldAnvilUser();
+            Author user = new Author();
             HttpResponseMessage response = await client.GetAsync("user");
             if (response.IsSuccessStatusCode)
             {
-                user = await response.Content.ReadAsAsync<WorldAnvilUser>();
+                user = await response.Content.ReadAsAsync<Author>();
             }
             else
             {

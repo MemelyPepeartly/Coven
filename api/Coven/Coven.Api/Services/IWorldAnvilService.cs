@@ -4,7 +4,7 @@ namespace Coven.Api.Services
 {
     public interface IWorldAnvilService
     {
-        Task<WorldAnvilUser> GetUser();
+        Task<Author> GetUser();
         Task<WorldAnvilUserWorlds> GetWorlds();
         Task<WorldAnvilUserArticles> GetArticles(Guid worldId);
     }
