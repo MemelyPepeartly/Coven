@@ -1,6 +1,5 @@
 ﻿using Azure.Core;
 using Coven.Logic.DTO.WorldAnvil;
-using Coven.Logic.Request_Models.Get;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -23,18 +22,24 @@ namespace Coven.Api.Services
             client.DefaultRequestHeaders.Add("x-auth-token", _config["WorldAnvilToken"]);
             client.DefaultRequestHeaders.Add("x-application-key", _config["WorldAnvilAppKey"]);
         }
-        public async Task<ArticleDTO> GetArticles(Guid worldId)
+        public async Task<WorldAnvilUserArticles> GetArticles(Guid worldId)
         {
-            throw new NotImplementedException();
+            WorldAnvilUserArticles articles = new WorldAnvilUserArticles();
+            HttpResponseMessage response = await client.GetAsync($"world/{worldId}/articles");
+            if (response.IsSuccessStatusCode)
+            {
+                articles = await response.Content.ReadAsAsync<WorldAnvilUserArticles>();
+            }
+            return articles;
         }
 
-        public async Task<WorldAnvilWorld> GetWorlds()
+        public async Task<WorldAnvilUserWorlds> GetWorlds()
         {
-            var worlds = new WorldAnvilWorld();
+            WorldAnvilUserWorlds worlds = new WorldAnvilUserWorlds();
             HttpResponseMessage response = await client.GetAsync($"user/{(await GetUser()).id}/worlds");
             if (response.IsSuccessStatusCode)
             {
-                worlds = await response.Content.ReadAsAsync<WorldAnvilWorld>();
+                worlds = await response.Content.ReadAsAsync<WorldAnvilUserWorlds>();
             }
             return worlds;
         }
