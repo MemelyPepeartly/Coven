@@ -1,11 +1,12 @@
 ﻿using Coven.Logic.DTO.WorldAnvil;
+using Coven.Logic.Request_Models.Get;
 
 namespace Coven.Api.Services
 {
     public interface IWorldAnvilService
     {
-        Task<object> GetUser();
-        Task<object> GetWorld(Guid worldId);
+        Task<WorldAnvilUser> GetUser();
+        Task<WorldAnvilWorld> GetWorlds();
         Task<ArticleDTO> GetArticles(Guid worldId);
     }
 }
