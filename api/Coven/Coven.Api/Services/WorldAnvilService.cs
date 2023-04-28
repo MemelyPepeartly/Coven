@@ -1,44 +1,56 @@
-﻿using Coven.Logic.DTO.WorldAnvil;
+﻿using Azure.Core;
+using Coven.Logic.DTO.WorldAnvil;
+using Coven.Logic.Request_Models.Get;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RestSharp;
+using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
+using System.Text.Json.Nodes;
 
 namespace Coven.Api.Services
 {
     public class WorldAnvilService : IWorldAnvilService
     {
-        private HttpClient WorldAnvilClient;
         private readonly IConfiguration _config;
-
+        private HttpClient client;
         public WorldAnvilService(IConfiguration config) 
         { 
             _config = config;
+            client = new HttpClient();
 
-            WorldAnvilClient = new HttpClient();
-            WorldAnvilClient.BaseAddress = new Uri("https://www.worldanvil.com/api/aragorn/");
-            WorldAnvilClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            WorldAnvilClient.DefaultRequestHeaders.Add("x-auth-token", _config["WorldAnvilToken"]);
-            WorldAnvilClient.DefaultRequestHeaders.Add("x-application-key", _config["WorldAnvilAppKey"]);
+            client.BaseAddress = new Uri("https://www.worldanvil.com/api/aragorn/");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Add("x-auth-token", _config["WorldAnvilToken"]);
+            client.DefaultRequestHeaders.Add("x-application-key", _config["WorldAnvilAppKey"]);
         }
         public async Task<ArticleDTO> GetArticles(Guid worldId)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<object> GetWorld(Guid worldId)
+        public async Task<WorldAnvilWorld> GetWorlds()
         {
-            var data = new ByteArrayContent(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { worldId = worldId })));
-            data.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            return await WorldAnvilClient.GetAsync($"world/dbd8562f-06be-4063-9f6d-e90bf89c761e");
+            var worlds = new WorldAnvilWorld();
+            HttpResponseMessage response = await client.GetAsync($"user/{(await GetUser()).id}/worlds");
+            if (response.IsSuccessStatusCode)
+            {
+                worlds = await response.Content.ReadAsAsync<WorldAnvilWorld>();
+            }
+            return worlds;
         }
 
-        public async Task<object> GetUser()
+        public async Task<WorldAnvilUser> GetUser()
         {
-            var user = await WorldAnvilClient.GetAsync(WorldAnvilClient.BaseAddress + "user");
+            WorldAnvilUser user = new WorldAnvilUser();
+            HttpResponseMessage response = await client.GetAsync("user");
+            if (response.IsSuccessStatusCode)
+            {
+                user = await response.Content.ReadAsAsync<WorldAnvilUser>();
+            }
+            else
+            {
+                throw new Exception("oop");
+            }
             return user;
         }
     }
