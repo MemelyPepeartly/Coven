@@ -26,5 +26,17 @@ namespace Tardigrade.Api.Controllers
         {
             return Ok(await WorldAnvilService.GetUser());
         }
+
+        [HttpGet("GetWorldArticles")]
+        public async Task<ActionResult> GetWorldArticles(Guid worldId)
+        {
+            return Ok(await WorldAnvilService.GetArticles(worldId));
+        }
+
+        [HttpGet("GetWorldArticles/{articleId}")]
+        public async Task<ActionResult> GetWorldArticle(Guid articleId)
+        {
+            return Ok(await WorldAnvilService.GetArticle(articleId));
+        }
     }
 }
