@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Coven.Logic.Base_Types;
 using Coven.Logic.DTO.WorldAnvil;
 using Newtonsoft.Json;
 using System.Net.Http;
@@ -32,6 +33,16 @@ namespace Coven.Api.Services
             }
             return articles;
         }
+        public async Task<Article> GetArticle(Guid articleId)
+        {
+            Article article = new Article();
+            HttpResponseMessage response = await client.GetAsync($"article/{articleId}");
+            if (response.IsSuccessStatusCode)
+            {
+                article = await response.Content.ReadAsAsync<Article>();
+            }
+            return article;
+        }
 
         public async Task<WorldAnvilUserWorlds> GetWorlds()
         {
@@ -51,10 +62,6 @@ namespace Coven.Api.Services
             if (response.IsSuccessStatusCode)
             {
                 user = await response.Content.ReadAsAsync<Author>();
-            }
-            else
-            {
-                throw new Exception("oop");
             }
             return user;
         }
