@@ -31,7 +31,7 @@ namespace Tardigrade.Api.Controllers
         [HttpGet("GetWorldArticleSummary")]
         public async Task<ActionResult> GetWorldArticleSummary(Guid worldId)
         {
-            WorldArticlesSummary result = await WorldAnvilService.GetArticles(worldId);
+            WorldArticlesSummary result = await WorldAnvilService.GetWorldArticlesSummary(worldId);
             result.articles = result.articles.OrderBy(a => a.title).ToList();
             return Ok(result);
         }

@@ -23,7 +23,7 @@ namespace Coven.Api.Services
             client.DefaultRequestHeaders.Add("x-auth-token", _config["WorldAnvilToken"]);
             client.DefaultRequestHeaders.Add("x-application-key", _config["WorldAnvilAppKey"]);
         }
-        public async Task<WorldArticlesSummary> GetArticles(Guid worldId)
+        public async Task<WorldArticlesSummary> GetWorldArticlesSummary(Guid worldId)
         {
             WorldArticlesSummary articles = new WorldArticlesSummary();
             HttpResponseMessage response = await client.GetAsync($"world/{worldId}/articles");
