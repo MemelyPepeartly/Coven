@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Author } from '../interfaces/Author';
 
 @Component({
   selector: 'app-author',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./author.component.scss']
 })
 export class AuthorComponent {
-
+  @Input() author!: Author;
 }
