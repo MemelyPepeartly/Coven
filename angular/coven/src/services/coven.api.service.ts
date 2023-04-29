@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+import { WorldArticlesSummary } from 'src/app/interfaces/Article';
 import { Author } from 'src/app/interfaces/Author';
-import { World } from 'src/app/interfaces/World';
+import { World, WorldsSummary } from 'src/app/interfaces/World';
 
 const endpoint = "https://localhost:7127/api/"; 
 
@@ -11,7 +12,7 @@ export class CovenApiService {
 
   constructor() { }
 
-  async GetWorldAnvilUser()
+  async GetWorldAnvilUser(): Promise<Author>
   {
     const response = await fetch(endpoint + "World/GetAnvilUser");
     const data = await response.json() as Author;
@@ -20,9 +21,17 @@ export class CovenApiService {
     return data;
   }
 
-  async GetWorldInfo(): Promise<World> {
+  async GetWorldInfo(): Promise<WorldsSummary> {
     const response = await fetch(endpoint + "World/GetWorldInfo");
-    const data = await response.json() as World;
+    const data = await response.json() as WorldsSummary;
+  
+    console.log(data);
+    return data;
+  }
+
+  async GetWorldArticleSummary(worldId: string): Promise<WorldArticlesSummary> {
+    const response = await fetch(`${endpoint}World/GetWorldArticleSummary?worldId=${worldId}`);
+    const data = await response.json() as WorldArticlesSummary;
   
     console.log(data);
     return data;
