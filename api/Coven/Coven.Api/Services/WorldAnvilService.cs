@@ -23,13 +23,13 @@ namespace Coven.Api.Services
             client.DefaultRequestHeaders.Add("x-auth-token", _config["WorldAnvilToken"]);
             client.DefaultRequestHeaders.Add("x-application-key", _config["WorldAnvilAppKey"]);
         }
-        public async Task<WorldAnvilUserArticles> GetArticles(Guid worldId)
+        public async Task<WorldArticlesSummary> GetArticles(Guid worldId)
         {
-            WorldAnvilUserArticles articles = new WorldAnvilUserArticles();
+            WorldArticlesSummary articles = new WorldArticlesSummary();
             HttpResponseMessage response = await client.GetAsync($"world/{worldId}/articles");
             if (response.IsSuccessStatusCode)
             {
-                articles = await response.Content.ReadAsAsync<WorldAnvilUserArticles>();
+                articles = await response.Content.ReadAsAsync<WorldArticlesSummary>();
             }
             return articles;
         }
@@ -44,13 +44,13 @@ namespace Coven.Api.Services
             return article;
         }
 
-        public async Task<WorldAnvilUserWorlds> GetWorlds()
+        public async Task<WorldsSummary> GetWorlds()
         {
-            WorldAnvilUserWorlds worlds = new WorldAnvilUserWorlds();
+            WorldsSummary worlds = new WorldsSummary();
             HttpResponseMessage response = await client.GetAsync($"user/{(await GetUser()).id}/worlds");
             if (response.IsSuccessStatusCode)
             {
-                worlds = await response.Content.ReadAsAsync<WorldAnvilUserWorlds>();
+                worlds = await response.Content.ReadAsAsync<WorldsSummary>();
             }
             return worlds;
         }
