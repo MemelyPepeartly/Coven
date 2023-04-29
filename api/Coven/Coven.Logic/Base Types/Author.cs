@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Coven.Logic.DTO.WorldAnvil
 {
+    /// <summary>
+    /// Information about an author. This is the data type associated with certain returns from Worldanvil
+    /// </summary>
     public class Author
     {
         public Guid id { get; set; }
