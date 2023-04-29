@@ -10,9 +10,6 @@ namespace Coven.Logic.Meta_Objects
 {
     public class ArticleMeta
     {
-    }
-    public class UserWorldArticleMeta
-    {
         public Guid id { get; set; }
         public string title { get; set; }
         public string state { get; set; }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Coven.Logic.DTO.WorldAnvil
 {
-    public class WorldAnvilUserWorlds
+    public class WorldsSummary
     {
         public Guid id { get; set; }
         public string username { get; set; }
