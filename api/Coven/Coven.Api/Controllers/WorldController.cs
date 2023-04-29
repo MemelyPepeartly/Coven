@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Coven.Api.Services;
+using Coven.Logic.DTO.WorldAnvil;
 
 namespace Tardigrade.Api.Controllers
 {
@@ -28,9 +29,11 @@ namespace Tardigrade.Api.Controllers
         }
 
         [HttpGet("GetWorldArticleSummary")]
-        public async Task<ActionResult> GetWorldArticles(Guid worldId)
+        public async Task<ActionResult> GetWorldArticleSummary(Guid worldId)
         {
-            return Ok(await WorldAnvilService.GetArticles(worldId));
+            WorldArticlesSummary result = await WorldAnvilService.GetArticles(worldId);
+            result.articles = result.articles.OrderBy(a => a.title).ToList();
+            return Ok(result);
         }
 
         [HttpGet("GetWorldArticles/{articleId}")]
