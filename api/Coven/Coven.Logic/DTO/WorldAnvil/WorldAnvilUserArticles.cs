@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Coven.Logic.DTO.WorldAnvil
 {
+    /// <summary>
+    /// Article object that comes as part of the response from getting a world
+    /// </summary>
     public class WorldAnvilUserArticles
     {
         public WorldMeta world { get; set; }
