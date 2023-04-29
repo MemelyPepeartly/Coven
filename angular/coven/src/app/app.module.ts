@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { AuthorComponent } from './author/author.component';
 import { WorldComponent } from './world/world.component';
 import { SectionComponent } from './section/section.component';
+import { SummaryComponent } from './summary/summary.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { SectionComponent } from './section/section.component';
     HomeComponent,
     AuthorComponent,
     WorldComponent,
-    SectionComponent
+    SectionComponent,
+    SummaryComponent
   ],
   imports: [
     BrowserModule,
