@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { UserWorldMeta, WorldMeta, WorldsSummary } from '../interfaces/World';
 import { CovenApiService } from 'src/services/coven.api.service';
-import { Article, WorldArticlesSummary } from '../interfaces/Article';
+import { Article, ArticleMeta, WorldArticlesSummary } from '../interfaces/Article';
 
 @Component({
   selector: 'app-summary',
@@ -16,6 +16,8 @@ export class SummaryComponent {
   loadingWorldSummary: boolean = false;
   worldArticleSummary: WorldArticlesSummary | undefined;
 
+  @Output() clickedArticle = new EventEmitter<string>();
+
   async GetWorldArticles(worldMeta: UserWorldMeta)
   {
     this.loadingWorldSummary = true;
@@ -23,5 +25,10 @@ export class SummaryComponent {
     this.worldArticleSummary = await this.covenService.GetWorldArticleSummary(worldMeta.id);
     
     this.loadingWorldSummary = false;
+  }
+
+  ClickArticleEvent(article: ArticleMeta)
+  {
+    this.clickedArticle.emit(article.id);
   }
 }

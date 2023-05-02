@@ -12,8 +12,7 @@
                   <mat-spinner *ngIf="loadingWorldSummary"></mat-spinner>
 
                   <mat-list *ngIf="!loadingWorldSummary" role="list">
-                    <mat-list-item *ngFor="let article of worldArticleSummary?.articles" 
-                        role="listitem">{{ article.title }}</mat-list-item>
+                    <mat-list-item *ngFor="let article of worldArticleSummary?.articles" role="listitem">{{ article.title }} <button mat-raised-button class="articleBtn" (click)="ClickArticleEvent(article)">Get Article</button></mat-list-item>
                   </mat-list>
 
                 </mat-expansion-panel>
