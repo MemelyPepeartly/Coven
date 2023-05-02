@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { WorldArticlesSummary } from 'src/app/interfaces/Article';
+import { Article, WorldArticlesSummary } from 'src/app/interfaces/Article';
 import { Author } from 'src/app/interfaces/Author';
 import { World, WorldsSummary } from 'src/app/interfaces/World';
 
@@ -16,23 +16,28 @@ export class CovenApiService {
   {
     const response = await fetch(endpoint + "World/GetAnvilUser");
     const data = await response.json() as Author;
-  
-    console.log(data);
+
     return data;
   }
 
   async GetWorldInfo(): Promise<WorldsSummary> {
     const response = await fetch(endpoint + "World/GetWorldInfo");
     const data = await response.json() as WorldsSummary;
-  
-    console.log(data);
+
     return data;
   }
 
   async GetWorldArticleSummary(worldId: string): Promise<WorldArticlesSummary> {
     const response = await fetch(`${endpoint}World/GetWorldArticleSummary?worldId=${worldId}`);
     const data = await response.json() as WorldArticlesSummary;
-  
+
+    return data;
+  }
+
+  async GetFullArticle(articleId: string): Promise<Article> {
+    const response = await fetch(`${endpoint}World/GetWorldArticles/${articleId}`);
+    const data = await response.json() as Article;
+
     console.log(data);
     return data;
   }
