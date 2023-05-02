@@ -3,6 +3,7 @@ import { CovenApiService } from 'src/services/coven.api.service';
 import { Author } from '../interfaces/Author';
 import { ImplicitReceiver } from '@angular/compiler';
 import { World, WorldsSummary } from '../interfaces/World';
+import { Article } from '../interfaces/Article';
 
 @Component({
   selector: 'app-home',
@@ -14,17 +15,19 @@ export class HomeComponent implements OnInit {
 
   author: Author | undefined;
   summary: WorldsSummary | undefined;
+  selectedArticle: Article | undefined;
 
   async ngOnInit() {
     
   }
-
-  
 
   async getUser() {
     this.author = await this.covenService.GetWorldAnvilUser();
   }
   async getWorld() {
     this.summary = await this.covenService.GetWorldInfo(); 
+  }
+  async getSelectedArticle(articleId: string) {
+    this.selectedArticle = await this.covenService.GetFullArticle(articleId);
   }
 }

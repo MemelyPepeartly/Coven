@@ -7,8 +7,13 @@
         <div class="infobox" *ngIf="author">
             <app-author [author]="author"></app-author>
         </div>
+
         <div class="infobox" *ngIf="summary">
-            <app-summary [summary]="summary"></app-summary>
+            <app-summary [summary]="summary" (clickedArticle)="getSelectedArticle($event)"></app-summary>
+        </div>
+
+        <div class="infobox" *ngIf="selectedArticle">
+            <app-article [selectedArticle]="selectedArticle"></app-article>
         </div>
     </div>
 </div>
