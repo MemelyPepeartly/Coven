@@ -9,5 +9,6 @@ namespace Coven.Api.Services
         Task<WorldsSummary> GetWorlds();
         Task<WorldArticlesSummary> GetWorldArticlesSummary(Guid worldId);
         Task<Article> GetArticle(Guid articleId);
+        Task<object> GetTest(Guid articleId);
     }
 }

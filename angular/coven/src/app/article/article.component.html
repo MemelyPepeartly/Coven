@@ -2,7 +2,7 @@
     <mat-card id="card">
         <mat-card-title>{{ selectedArticle.title }}</mat-card-title>
         <mat-card-content>
-            <p>{{ selectedArticle.content }}</p>
+            <div [innerHTML]="selectedArticle.contentParsed"></div>
         </mat-card-content>
     </mat-card>
 </div>

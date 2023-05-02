@@ -13,8 +13,8 @@ namespace Coven.Logic.Base_Types
         public string name { get; set; }
         public string locale { get; set; }
         public string description { get; set; }
-        public string description_parsed { get; set; }
-        public string display_css { get; set; }
+        public string descriptionParsed { get; set; }
+        public string displayCss { get; set; }
         public int theme { get; set; }
         public string tags { get; set; }
         public string slug { get; set; }

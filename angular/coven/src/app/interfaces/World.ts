@@ -5,8 +5,8 @@ export interface World {
     name: string;
     locale: string;
     description: string;
-    description_parsed: string;
-    display_css: string;
+    descriptionParsed: string;
+    displayCss: string;
     theme: number;
     tags: string;
     slug: string;

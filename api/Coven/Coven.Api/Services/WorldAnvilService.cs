@@ -65,5 +65,16 @@ namespace Coven.Api.Services
             }
             return user;
         }
+
+        public async Task<object> GetTest(Guid articleId)
+        {
+            string article = "";
+            HttpResponseMessage response = await client.GetAsync($"article/{articleId}");
+            if (response.IsSuccessStatusCode)
+            {
+                article = await response.Content.ReadAsStringAsync();
+            }
+            return article;
+        }
     }
 }
