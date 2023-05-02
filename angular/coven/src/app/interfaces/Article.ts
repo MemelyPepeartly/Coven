@@ -1,5 +1,6 @@
 import { Author } from "./Author";
 import { Category } from "./Category";
+import { Sections } from "./Section";
 import { WorldMeta } from "./World";
 
 export interface Article {
@@ -22,7 +23,7 @@ export interface Article {
     world: WorldMeta;
     content: string;
     content_parsed: string;
-    sections: any; // Replace with a more specific type if you know the structure
+    sections: Sections;
     relations: any; // Replace with a more specific type if you know the structure
     full_render: string;
 }
