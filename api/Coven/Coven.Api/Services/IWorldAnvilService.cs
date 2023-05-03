@@ -1,5 +1,6 @@
 ﻿using Coven.Logic.Base_Types;
 using Coven.Logic.DTO.WorldAnvil;
+using Coven.Logic.Meta_Objects;
 
 namespace Coven.Api.Services
 {
@@ -9,6 +10,6 @@ namespace Coven.Api.Services
         Task<WorldsSummary> GetWorlds();
         Task<WorldArticlesSummary> GetWorldArticlesSummary(Guid worldId);
         Task<Article> GetArticle(Guid articleId);
-        Task<object> GetTest(Guid articleId);
+        Task<List<ArticleMeta>> GetArticleMetas(Guid worldId);
     }
 }
