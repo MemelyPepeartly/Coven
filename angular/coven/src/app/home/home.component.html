@@ -1,19 +1,34 @@
 <div id="container">
     <div id="actionDiv">
-        <button class="actionBtn" mat-raised-button (click)="getUser()">Get user</button>
-        <button class="actionBtn" mat-raised-button (click)="getWorld()" [disabled]="!author">Get world</button>
+        <button class="actionBtn" mat-raised-button (click)="getUser()">Get User World Information</button>
     </div>
-    <div id="resultDiv">
+
+    <div id="authorInfoDiv">
         <div class="infobox" *ngIf="author">
             <app-author [author]="author"></app-author>
         </div>
-
+    
         <div class="infobox" *ngIf="summary">
-            <app-summary [summary]="summary" (clickedArticle)="getSelectedArticle($event)"></app-summary>
-        </div>
-
-        <div class="infobox" *ngIf="selectedArticle">
-            <app-article [selectedArticle]="selectedArticle"></app-article>
+            <app-summary [summary]="summary" (worldClickedEmitter)="getWorldArticleSummary($event)"></app-summary>
         </div>
     </div>
-</div>
+
+    <div id="articleInfoDiv">
+        <div class="infobox">
+            <mat-card *ngIf="worldArticleSummary" id="card">
+                <mat-card-title>World Articles</mat-card-title>
+                <mat-card-content>
+                  <mat-spinner *ngIf="loadingWorldSummary"></mat-spinner>
+                  <app-article-list *ngIf="!loadingWorldSummary"
+                    [worldId]="worldArticleSummary.world.id"
+                    [articles]="worldArticleSummary.articles" 
+                    (articleClickedEmitter)="getSelectedArticle($event)"></app-article-list>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    
+        <div *ngIf="author && worldArticleSummary" class="infobox">
+            <app-article [selectedArticle]="selectedArticle" [articleLoaded]="selectedArticle != undefined && selectedArticle != null"></app-article>
+        </div>
+    </div>
+</div> 
