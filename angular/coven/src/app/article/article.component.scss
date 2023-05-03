@@ -1,8 +1,13 @@
-#cardDiv
+.content
 {
+    text-align: left !important;
+}
+
+#cardDiv {
     text-align: left;
 }
+
 #card {
-    width: 750px;
+    width: 100%;
     padding: 10px;
 }

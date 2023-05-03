@@ -1,8 +1,13 @@
 <div id="cardDiv">
-    <mat-card id="card">
+    <mat-card *ngIf="!articleLoaded" id="card">
+        <mat-card-title>Select an Article</mat-card-title>
+        <mat-card-subtitle>The content of the article will appear here</mat-card-subtitle>
+    </mat-card>
+
+    <mat-card *ngIf="articleLoaded" id="card">
         <mat-card-title>{{ selectedArticle.title }}</mat-card-title>
-        <mat-card-content>
-            <div [innerHTML]="selectedArticle.contentParsed"></div>
+        <mat-card-content class="content">
+            <div class="" [innerHTML]="selectedArticle.content | bbcode"></div>
         </mat-card-content>
     </mat-card>
 </div>
