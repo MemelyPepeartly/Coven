@@ -12,23 +12,11 @@ export class SummaryComponent {
   
   constructor(public covenService: CovenApiService) {}
 
-  @Input() summary!: WorldsSummary | undefined;
-  loadingWorldSummary: boolean = false;
-  worldArticleSummary: WorldArticlesSummary | undefined;
+  @Input() summary: WorldsSummary;
+  @Output() worldClickedEmitter = new EventEmitter<UserWorldMeta>();
 
-  @Output() clickedArticle = new EventEmitter<string>();
-
-  async GetWorldArticles(worldMeta: UserWorldMeta)
+  async emitWorldClicked(worldMeta: UserWorldMeta)
   {
-    this.loadingWorldSummary = true;
-
-    this.worldArticleSummary = await this.covenService.GetWorldArticleSummary(worldMeta.id);
-    
-    this.loadingWorldSummary = false;
-  }
-
-  ClickArticleEvent(article: ArticleMeta)
-  {
-    this.clickedArticle.emit(article.id);
+    this.worldClickedEmitter.emit(worldMeta);
   }
 }

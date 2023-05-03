@@ -1,22 +1,12 @@
 <div id="cardDiv">
     <mat-card id="card">
-        <mat-card-title>Summary</mat-card-title>
+        <mat-card-title>Worlds</mat-card-title>
+        <mat-card-subtitle>Select a world to get all of that world's articles</mat-card-subtitle>
         <mat-card-content>
-            <mat-accordion>
-                <mat-expansion-panel hideToggle *ngFor="let item of summary?.worlds" (opened)="GetWorldArticles(item)">
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>{{ item.name }}</mat-panel-title>
-                    <mat-panel-description>This is a summary of the content</mat-panel-description>
-                  </mat-expansion-panel-header>
-
-                  <mat-spinner *ngIf="loadingWorldSummary"></mat-spinner>
-
-                  <mat-list *ngIf="!loadingWorldSummary" role="list">
-                    <mat-list-item *ngFor="let article of worldArticleSummary?.articles" role="listitem">{{ article.title }} <button mat-raised-button class="articleBtn" (click)="ClickArticleEvent(article)">Get Article</button></mat-list-item>
-                  </mat-list>
-
-                </mat-expansion-panel>
-            </mat-accordion>
+          <mat-list>
+            <mat-list-item matRipple *ngFor="let item of summary?.worlds" class="listItem mat-elevation-z2" (click)="emitWorldClicked(item)">{{ item.name }}</mat-list-item>
+          </mat-list>
         </mat-card-content>
     </mat-card>
 </div>
+
