@@ -11,6 +11,9 @@ import { WorldComponent } from './world/world.component';
 import { SectionComponent } from './section/section.component';
 import { SummaryComponent } from './summary/summary.component';
 import { ArticleComponent } from './article/article.component';
+import { ArticleListComponent } from './article-list/article-list.component';
+
+import { BbcodePipe } from './pipes/bbcode.pipe';
 
 @NgModule({
   declarations: [
@@ -20,7 +23,9 @@ import { ArticleComponent } from './article/article.component';
     WorldComponent,
     SectionComponent,
     SummaryComponent,
-    ArticleComponent
+    ArticleComponent,
+    ArticleListComponent,
+    BbcodePipe
   ],
   imports: [
     BrowserModule,
