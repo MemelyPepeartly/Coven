@@ -1,7 +1,9 @@
 ﻿using Azure.Core;
 using Coven.Logic.Base_Types;
 using Coven.Logic.DTO.WorldAnvil;
+using Coven.Logic.Meta_Objects;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json.Nodes;
@@ -66,15 +68,42 @@ namespace Coven.Api.Services
             return user;
         }
 
-        public async Task<object> GetTest(Guid articleId)
+        public async Task<List<ArticleMeta>> GetArticleMetas(Guid worldId)
         {
-            string article = "";
-            HttpResponseMessage response = await client.GetAsync($"article/{articleId}");
-            if (response.IsSuccessStatusCode)
+            WorldArticlesSummary summary = new WorldArticlesSummary();
+            List<ArticleMeta> articles = new List<ArticleMeta>();
+
+            bool moreExists = true;
+            int page = 1;
+            while(moreExists)
             {
-                article = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response = await client.GetAsync($"world/{worldId}/articles?offset={page * 50}");
+                if (response.IsSuccessStatusCode)
+                {
+                    summary = await response.Content.ReadAsAsync<WorldArticlesSummary>();
+                }
+
+                articles = articles
+                    .Concat(summary.articles)
+                    .ToList();
+                page++;
+
+                // If the last call had less than 50, we've probably reached the end, so break
+                if (summary.articles.Count < 50)
+                {
+                    moreExists = false;
+                }
+
+                // Minor bit of content checking in case something goes wrong. 30 requests should be more than enough
+                if(page > 30)
+                {
+                    break;
+                }
             }
-            return article;
+
+            return articles
+                .OrderBy(a => a.title)
+                .ToList();
         }
     }
 }
