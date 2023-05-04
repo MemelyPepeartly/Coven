@@ -42,17 +42,17 @@ namespace Coven.Api.Controllers
                 {
                     characterSet = word,
                     vector = (await _openAIAPI.Embeddings.CreateEmbeddingAsync(word)).Data
-                }) ;
+                });
             }
-            
 
-            List<string> existingEmbeddings = (await WorldAnvilService.GetWorlds()).worlds
-                .Select(s => s.name)
+            var worlds = await WorldAnvilService.GetWorlds();
+            List<string> articleTitles = (await WorldAnvilService.GetWorldArticlesSummary(worlds.worlds[1].id)).articles
+                .Select(s => s.title)
                 .ToList();
 
-            foreach (string thing in existingEmbeddings)
+            foreach (string thing in articleTitles)
             {
-                DTO.queryEmbeddings.Add(new Embedding()
+                DTO.worldEmbeddings.Add(new Embedding()
                 {
                     characterSet = thing,
                     vector = (await _openAIAPI.Embeddings.CreateEmbeddingAsync(thing)).Data
