@@ -4,6 +4,7 @@ using Coven.Logic.Request_Models.get;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpenAI_API;
+using System.Diagnostics;
 
 namespace Coven.Api.Controllers
 {
@@ -24,8 +25,13 @@ namespace Coven.Api.Controllers
             WorldAnvilService = _worldAnvilService;
         }
 
-        [HttpPost("GetArticleEmbeddings")]
-        public async Task<ActionResult> GetArticleEmbeddings([FromBody]GetEmbeddingsRequestModel model)
+        /// <summary>
+        /// Ideally used for sending in a query about a world or concept and getting back a list of worlds that are similar to the query.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("QueryWorlds")]
+        public async Task<ActionResult> QueryWorlds([FromBody]GetEmbeddingsRequestModel model)
         {
             EmbeddingsDTO DTO = new EmbeddingsDTO();
             foreach (string word in model.userInput.Split(" "))
@@ -53,14 +59,61 @@ namespace Coven.Api.Controllers
                 });
             }
 
-            var result = CompareEmbeddings(DTO);
+            var result = GetRelatedEmbeddings(DTO);
 
             return Ok(result);
         }
 
-        private object CompareEmbeddings(object DTO)
+        // Calculate the dot product of two vectors
+        private static float DotProduct(float[] vecA, float[] vecB)
         {
-            return true;
+            float dotProduct = 0;
+            for (int i = 0; i < vecA.Length; i++)
+            {
+                dotProduct += vecA[i] * vecB[i];
+            }
+            return dotProduct;
         }
+
+        // Calculate the magnitude of a vector
+        private static float Magnitude(float[] vec)
+        {
+            float sumOfSquares = 0;
+            for (int i = 0; i < vec.Length; i++)
+            {
+                sumOfSquares += vec[i] * vec[i];
+            }
+            return (float)Math.Sqrt(sumOfSquares);
+        }
+
+        // Calculate the cosine similarity between two vectors
+        private static float CalculateCosineSimilarity(float[] vecA, float[] vecB)
+        {
+            float dotProduct = DotProduct(vecA, vecB);
+            float magnitudeA = Magnitude(vecA);
+            float magnitudeB = Magnitude(vecB);
+            return dotProduct / (magnitudeA * magnitudeB);
+        }
+
+        // Get related embeddings using cosine similarity
+        public static List<Embedding> GetRelatedEmbeddings(EmbeddingsDTO embeddingsDTO, float similarityThreshold = 0.7f)
+        {
+            List<Embedding> relatedEmbeddings = new List<Embedding>();
+
+            foreach (Embedding queryEmbedding in embeddingsDTO.queryEmbeddings)
+            {
+                foreach (Embedding worldEmbedding in embeddingsDTO.worldEmbeddings)
+                {
+                    float similarity = CalculateCosineSimilarity(queryEmbedding.vector.SelectMany(x => x.Embedding).ToArray(), worldEmbedding.vector.SelectMany(x => x.Embedding).ToArray());
+                    if (similarity >= similarityThreshold)
+                    {
+                        relatedEmbeddings.Add(worldEmbedding);
+                    }
+                }
+            }
+
+            return relatedEmbeddings;
+        }
+
     }
 }
