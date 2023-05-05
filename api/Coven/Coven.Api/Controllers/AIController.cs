@@ -1,6 +1,6 @@
 ﻿using Coven.Api.Services;
+using Coven.Data.DTO.AI;
 using Coven.Data.Repository;
-using Coven.Logic.DTO.AI;
 using Coven.Logic.DTO.WorldAnvil;
 using Coven.Logic.Request_Models.get;
 using Microsoft.AspNetCore.Http;
@@ -46,7 +46,7 @@ namespace Coven.Api.Controllers
                 DTO.queryEmbeddings.Add(new Embedding()
                 {
                     characterSet = word,
-                    vector = (await _openAIAPI.Embeddings.CreateEmbeddingAsync(word)).Data
+                    vectors = (await _openAIAPI.Embeddings.CreateEmbeddingAsync(word)).Data.SelectMany(v => v.Embedding).ToArray()
                 });
             }
 
@@ -55,12 +55,14 @@ namespace Coven.Api.Controllers
                 .Select(s => s.title)
                 .ToList();
 
-            foreach (string thing in articleTitles)
+            List<WACharacterSetDTO> existingEmbeddings = await Repository.GetUserEmbeddings(model.userId);
+
+            foreach (var embed in existingEmbeddings)
             {
                 DTO.worldEmbeddings.Add(new Embedding()
                 {
-                    characterSet = thing,
-                    vector = (await _openAIAPI.Embeddings.CreateEmbeddingAsync(thing)).Data
+                    characterSet = embed.characterSet,
+                    vectors = embed.vectors
                 });
             }
 
@@ -87,7 +89,6 @@ namespace Coven.Api.Controllers
             }
             return Ok(await Repository.GetUserEmbeddings(userId));
         }
-
 
         // Calculate the dot product of two vectors
         private static float DotProduct(float[] vecA, float[] vecB)
@@ -129,7 +130,7 @@ namespace Coven.Api.Controllers
             {
                 foreach (Embedding worldEmbedding in embeddingsDTO.worldEmbeddings)
                 {
-                    float similarity = CalculateCosineSimilarity(queryEmbedding.vector.SelectMany(x => x.Embedding).ToArray(), worldEmbedding.vector.SelectMany(x => x.Embedding).ToArray());
+                    float similarity = CalculateCosineSimilarity(queryEmbedding.vectors, worldEmbedding.vectors);
                     if (similarity >= similarityThreshold)
                     {
                         relatedEmbeddings.Add(worldEmbedding);
