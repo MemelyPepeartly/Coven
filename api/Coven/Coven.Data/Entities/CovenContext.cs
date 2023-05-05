@@ -15,89 +15,25 @@ public partial class CovenContext : DbContext
     {
     }
 
-    public virtual DbSet<Attribute> Attributes { get; set; }
+    public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<AttributeCategory> AttributeCategories { get; set; }
+    public virtual DbSet<WacharacterSet> WacharacterSets { get; set; }
 
-    public virtual DbSet<Character> Characters { get; set; }
+    public virtual DbSet<Waembedding> Waembeddings { get; set; }
 
-    public virtual DbSet<Client> Clients { get; set; }
-
-    public virtual DbSet<CustomFeature> CustomFeatures { get; set; }
-
-    public virtual DbSet<Feature> Features { get; set; }
-
-    public virtual DbSet<FeatureCategory> FeatureCategories { get; set; }
+    public virtual DbSet<Wasnippet> Wasnippets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Attribute>(entity =>
+        modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.AttributeId).HasName("PK__Attribut__03B803F0C2BD637F");
+            entity.HasKey(e => e.UserId).HasName("PK__User__CB9A1CFFA45B86B5");
 
-            entity.ToTable("Attribute", "app");
+            entity.ToTable("User", "app");
 
-            entity.Property(e => e.AttributeId)
-                .ValueGeneratedNever()
-                .HasColumnName("attributeId");
-            entity.Property(e => e.AttributeCategoryId).HasColumnName("attributeCategoryId");
-            entity.Property(e => e.AttributeName)
-                .HasMaxLength(25)
-                .HasColumnName("attributeName");
-            entity.Property(e => e.AttributeValue)
-                .HasMaxLength(35)
-                .HasColumnName("attributeValue");
+            entity.HasIndex(e => e.Email, "UQ__User__AB6E616410269FDD").IsUnique();
 
-            entity.HasOne(d => d.AttributeCategory).WithMany(p => p.Attributes)
-                .HasForeignKey(d => d.AttributeCategoryId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Attribute__attri__6C190EBB");
-        });
-
-        modelBuilder.Entity<AttributeCategory>(entity =>
-        {
-            entity.HasKey(e => e.AttributeCategoryId).HasName("PK__Attribut__7CEBDAB96B63EABE");
-
-            entity.ToTable("AttributeCategory", "app");
-
-            entity.Property(e => e.AttributeCategoryId)
-                .ValueGeneratedNever()
-                .HasColumnName("attributeCategoryId");
-            entity.Property(e => e.AttributeCategoryDescription)
-                .HasMaxLength(150)
-                .HasColumnName("attributeCategoryDescription");
-            entity.Property(e => e.AttributeCategoryName)
-                .HasMaxLength(25)
-                .HasColumnName("attributeCategoryName");
-        });
-
-        modelBuilder.Entity<Character>(entity =>
-        {
-            entity.HasKey(e => e.CharacterId).HasName("PK__Characte__ADF919BF69C0AE76");
-
-            entity.ToTable("Character", "app");
-
-            entity.Property(e => e.CharacterId)
-                .ValueGeneratedNever()
-                .HasColumnName("characterId");
-            entity.Property(e => e.CharacterName)
-                .HasMaxLength(50)
-                .HasColumnName("characterName");
-            entity.Property(e => e.UserId).HasColumnName("userId");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Characters)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Character__userI__5FB337D6");
-        });
-
-        modelBuilder.Entity<Client>(entity =>
-        {
-            entity.HasKey(e => e.UserId).HasName("PK__Client__CB9A1CFFB1E481F1");
-
-            entity.ToTable("Client", "app");
-
-            entity.HasIndex(e => e.Email, "UQ__Client__AB6E6164A6203F85").IsUnique();
+            entity.HasIndex(e => e.WorldAnvilUsername, "UQ__User__D93C724B0D0C2529").IsUnique();
 
             entity.Property(e => e.UserId)
                 .ValueGeneratedNever()
@@ -108,63 +44,67 @@ public partial class CovenContext : DbContext
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
                 .HasColumnName("username");
+            entity.Property(e => e.WorldAnvilUsername)
+                .HasMaxLength(50)
+                .HasColumnName("worldAnvilUsername");
         });
 
-        modelBuilder.Entity<CustomFeature>(entity =>
+        modelBuilder.Entity<WacharacterSet>(entity =>
         {
-            entity.HasKey(e => e.CustomFeatureId).HasName("PK__CustomFe__FE3D3D28F6112E01");
+            entity.HasKey(e => e.CharacterSetId).HasName("PK__WACharac__73ED7C93F85ABE3F");
 
-            entity.ToTable("CustomFeature", "app");
+            entity.ToTable("WACharacterSet", "app");
 
-            entity.Property(e => e.CustomFeatureId)
+            entity.Property(e => e.CharacterSetId)
                 .ValueGeneratedNever()
-                .HasColumnName("customFeatureId");
-            entity.Property(e => e.CustomFeatureName)
-                .HasMaxLength(25)
-                .HasColumnName("customFeatureName");
-            entity.Property(e => e.FeatureCategoryId).HasColumnName("featureCategoryId");
+                .HasColumnName("characterSetId");
+            entity.Property(e => e.CharacterSet).HasColumnName("characterSet");
+            entity.Property(e => e.UserId).HasColumnName("userId");
 
-            entity.HasOne(d => d.FeatureCategory).WithMany(p => p.CustomFeatures)
-                .HasForeignKey(d => d.FeatureCategoryId)
+            entity.HasOne(d => d.User).WithMany(p => p.WacharacterSets)
+                .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CustomFea__featu__6754599E");
+                .HasConstraintName("FK__WACharact__userI__76969D2E");
         });
 
-        modelBuilder.Entity<Feature>(entity =>
+        modelBuilder.Entity<Waembedding>(entity =>
         {
-            entity.HasKey(e => e.FeatureId).HasName("PK__Feature__F4F118B3E6A3718B");
+            entity.HasKey(e => e.EmbeddingId).HasName("PK__WAEmbedd__92ED47F4497F0E0C");
 
-            entity.ToTable("Feature", "app");
+            entity.ToTable("WAEmbedding", "app");
 
-            entity.Property(e => e.FeatureId)
+            entity.Property(e => e.EmbeddingId)
                 .ValueGeneratedNever()
-                .HasColumnName("featureId");
-            entity.Property(e => e.FeatureCategoryId).HasColumnName("featureCategoryId");
-            entity.Property(e => e.FeatureName)
-                .HasMaxLength(25)
-                .HasColumnName("featureName");
+                .HasColumnName("embeddingId");
+            entity.Property(e => e.CharacterSetId).HasColumnName("characterSetId");
+            entity.Property(e => e.Vector).HasColumnName("vector");
 
-            entity.HasOne(d => d.FeatureCategory).WithMany(p => p.Features)
-                .HasForeignKey(d => d.FeatureCategoryId)
+            entity.HasOne(d => d.CharacterSet).WithMany(p => p.Waembeddings)
+                .HasForeignKey(d => d.CharacterSetId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Feature__feature__6477ECF3");
+                .HasConstraintName("FK__WAEmbeddi__chara__797309D9");
         });
 
-        modelBuilder.Entity<FeatureCategory>(entity =>
+        modelBuilder.Entity<Wasnippet>(entity =>
         {
-            entity.HasKey(e => e.FeatureCategoryId).HasName("PK__FeatureC__B90A9A93AC60A894");
+            entity.HasKey(e => e.SnippetId).HasName("PK__WASnippe__C4FEC9170E87021C");
 
-            entity.ToTable("FeatureCategory", "app");
+            entity.ToTable("WASnippet", "app");
 
-            entity.Property(e => e.FeatureCategoryId)
+            entity.Property(e => e.SnippetId)
                 .ValueGeneratedNever()
-                .HasColumnName("featureCategoryId");
-            entity.Property(e => e.FeatureCategoryDescription)
-                .HasMaxLength(150)
-                .HasColumnName("featureCategoryDescription");
-            entity.Property(e => e.FeatureCategoryName)
-                .HasMaxLength(25)
-                .HasColumnName("featureCategoryName");
+                .HasColumnName("snippetId");
+            entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.Title)
+                .HasMaxLength(50)
+                .HasColumnName("title");
+            entity.Property(e => e.UserId).HasColumnName("userId");
+            entity.Property(e => e.WorldAnvilArticleId).HasColumnName("worldAnvilArticleId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Wasnippets)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__WASnippet__userI__73BA3083");
         });
 
         OnModelCreatingPartial(modelBuilder);

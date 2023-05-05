@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Coven.Api.Services;
-using Coven.Data.Entities;
 using Coven.Data.Repository;
+using Coven.Data.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
