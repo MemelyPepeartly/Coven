@@ -172,7 +172,7 @@ namespace Coven.Data.Repository
             }
         }
 
-        public float[] ByteArrayToFloatArray(byte[] byteArray)
+        public static float[] ByteArrayToFloatArray(byte[] byteArray)
         {
             float[] floatArray = new float[byteArray.Length / sizeof(float)];
             Buffer.BlockCopy(byteArray, 0, floatArray, 0, byteArray.Length);
