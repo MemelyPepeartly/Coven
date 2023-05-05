@@ -1,4 +1,5 @@
-﻿using Coven.Data.Entities;
+﻿using Coven.Data.DTO.AI;
+using Coven.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAI_API.Embedding;
 using System;
@@ -111,14 +112,40 @@ namespace Coven.Data.Repository
             }
         }
 
-        public async Task<List<WacharacterSet>> GetUserEmbeddings(Guid userId)
+        public async Task<List<UserDTO>> GetDTOUsers()
+        {
+            try
+            {
+                return await CovenContext.Users
+                    .Select(u => new UserDTO()
+                    {
+                        UserId = u.UserId,
+                        Username = u.Username,
+                        Email = u.Email,
+                        WorldAnvilUsername = u.WorldAnvilUsername
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<WACharacterSetDTO>> GetUserEmbeddings(Guid userId)
         {
             try
             {
                 return await CovenContext.WacharacterSets
                     .Include(x => x.Waembeddings)
                     .Where(x => x.UserId == userId)
-                    .ToListAsync();
+                        .SelectMany(x => x.Waembeddings)
+                        .Select(e => new WACharacterSetDTO()
+                        {
+                            characterSet = e.CharacterSet.CharacterSet,
+                            vectors = ByteArrayToFloatArray(e.Vector)
+                        })
+                        .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -143,6 +170,13 @@ namespace Coven.Data.Repository
             {
                 throw;
             }
+        }
+
+        public float[] ByteArrayToFloatArray(byte[] byteArray)
+        {
+            float[] floatArray = new float[byteArray.Length / sizeof(float)];
+            Buffer.BlockCopy(byteArray, 0, floatArray, 0, byteArray.Length);
+            return floatArray;
         }
     }
 }

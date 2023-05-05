@@ -1,4 +1,5 @@
-﻿using Coven.Data.Entities;
+﻿using Coven.Data.DTO.AI;
+using Coven.Data.Entities;
 using OpenAI_API.Embedding;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,8 @@ namespace Coven.Data.Repository
         #region Read
         Task<User> GetUser(Guid userId);
         Task<List<User>> GetUsers();
-        Task<List<WacharacterSet>> GetUserEmbeddings(Guid userId);
+        Task<List<UserDTO>> GetDTOUsers();
+        Task<List<WACharacterSetDTO>> GetUserEmbeddings(Guid userId);
         #endregion
 
         #region Update
