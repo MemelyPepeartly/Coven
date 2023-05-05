@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Coven.Logic.DTO.AI
+namespace Coven.Data.DTO.AI
 {
     public class UserDTO
     {
@@ -16,7 +16,5 @@ namespace Coven.Logic.DTO.AI
         public string Email { get; set; } = null!;
 
         public string WorldAnvilUsername { get; set; } = null!;
-
-        public ICollection<WACharacterSetDTO> WacharacterSets { get; set; } = new List<WACharacterSetDTO>();
     }
 }

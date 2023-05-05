@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Coven.Logic.DTO.AI
+namespace Coven.Data.DTO.AI
 {
     public class WACharacterSetDTO
     {
-        public string CharacterSet { get; set; }
+        public string characterSet { get; set; }
         public float[] vectors { get; set; }
     }
 }

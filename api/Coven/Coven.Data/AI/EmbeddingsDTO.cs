@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using OpenAI_API;
 using OpenAI_API.Embedding;
 
-namespace Coven.Logic.DTO.AI
+namespace Coven.Data.DTO.AI
 {
     public class EmbeddingsDTO
     {
@@ -22,6 +22,6 @@ namespace Coven.Logic.DTO.AI
     public class Embedding
     {
         public string characterSet { get; set; }
-        public List<OpenAI_API.Embedding.Data> vector { get; set; }
+        public float[] vectors { get; set; }
     }
 }
