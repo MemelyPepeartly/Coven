@@ -15,9 +15,10 @@ builder.Services.AddSignalR();
 
 // Database
 builder.Services.AddDbContext<CovenContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("CovenDB")));
-builder.Services.AddScoped<IRepository, Repository>();
 
+builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<IWorldAnvilService, WorldAnvilService>();
+builder.Services.AddScoped<IPineconeService, PineconeService>();
 
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
 {
