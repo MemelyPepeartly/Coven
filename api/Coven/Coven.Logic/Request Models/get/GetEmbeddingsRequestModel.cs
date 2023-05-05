@@ -9,5 +9,6 @@ namespace Coven.Logic.Request_Models.get
     public class GetEmbeddingsRequestModel
     {
         public string userInput { get; set; }
+        public Guid userId { get; set; }
     }
 }
