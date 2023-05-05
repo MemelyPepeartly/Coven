@@ -20,14 +20,19 @@ namespace Coven.Api.Controllers
 
         private readonly IRepository Repository;
         private readonly IWorldAnvilService WorldAnvilService;
+        private readonly IPineconeService PineconeService;
 
-        public AIController(IConfiguration config, IWorldAnvilService _worldAnvilService, IRepository _repository)
+        public AIController(IConfiguration config,
+            IWorldAnvilService _worldAnvilService,
+            IRepository _repository,
+            IPineconeService _pinecone)
         {
             _config = config;
             _openAIAPI = new OpenAIAPI(_config["OPENAI_API_KEY"]);
 
             Repository = _repository;
             WorldAnvilService = _worldAnvilService;
+            PineconeService = _pinecone;
         }
 
         /// <summary>
@@ -57,16 +62,17 @@ namespace Coven.Api.Controllers
 
             List<WACharacterSetDTO> existingEmbeddings = await Repository.GetUserEmbeddings(model.userId);
 
-            foreach (var embed in existingEmbeddings)
+            DTO.worldEmbeddings = existingEmbeddings.Select(e => new Embedding()
             {
-                DTO.worldEmbeddings.Add(new Embedding()
-                {
-                    characterSet = embed.characterSet,
-                    vectors = embed.vectors
-                });
-            }
+                characterSet = e.characterSet,
+                vectors = e.vectors
+            }).ToList();
 
-            var result = GetRelatedEmbeddings(DTO);
+            List<WACharacterSetDTO> result = GetRelatedEmbeddings(DTO).Select(e => new WACharacterSetDTO()
+            {
+                characterSet = e.characterSet,
+                //vectors = e.vectors
+            }).ToList();
 
             return Ok(result);
         }
@@ -74,20 +80,35 @@ namespace Coven.Api.Controllers
         [HttpPost("AddEmbeddings")]
         public async Task<ActionResult> AddEmbeddings(Guid userId, Guid worldId)
         {
-            WorldsSummary worlds = await WorldAnvilService.GetWorlds();
-            List<string> articleTitles = (await WorldAnvilService.GetWorldArticlesSummary(worldId)).articles
+            WorldArticlesSummary world = await WorldAnvilService.GetWorldArticlesSummary(worldId);
+            List<string> articleTitles = world.articles
                 .Select(s => s.title)
                 .ToList();
+
+            List<Embedding> embeddings = new List<Embedding>();
             foreach (string title in articleTitles)
             {
                 EmbeddingResult embedding = await _openAIAPI.Embeddings.CreateEmbeddingAsync(title);
-
-                var vectors = embedding.Data
-                    .SelectMany(t => t.Embedding)
-                    .ToArray();
-                await Repository.CreateEmbeddings(userId, title, vectors);
+                embeddings.Add(new Embedding()
+                {
+                    characterSet = title,
+                    vectors = embedding.Data.SelectMany(v => v.Embedding).ToArray()
+                });
             }
-            return Ok(await Repository.GetUserEmbeddings(userId));
+            while(embeddings.Count > 0)
+            {
+                // Pinecone has a limit of 250 vectors per request
+                int batchSize = Math.Min(250, embeddings.Count);
+
+                foreach (var embedding in embeddings.Take(batchSize))
+                {
+                    await PineconeService.UpsertVectors(world.world.title, embeddings);
+                }
+
+                embeddings.RemoveRange(0, batchSize);
+            }
+
+            return Ok();
         }
 
         // Calculate the dot product of two vectors
