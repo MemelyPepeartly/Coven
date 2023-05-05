@@ -2,6 +2,8 @@
 using Coven.Data.DTO.AI;
 using Coven.Data.Entities;
 using Coven.Data.Pinecone;
+using Coven.Logic.Request_Models.Post;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace Coven.Api.Services
@@ -80,18 +82,22 @@ namespace Coven.Api.Services
             return request;
         }
 
-        public async Task<RestResponse> QueryPineconeIndex(string worldTitle, string query)
+        public async Task<PineconeQueryResponse> QueryPineconeIndex(string worldTitle, string query, float[] queryVectors)
         {
             var request = CreateRequest("query", Method.Post);
             request.AddJsonBody<PineconeQueryRequest>(new PineconeQueryRequest()
             {
                 Namespace = worldTitle,
-
+                Vector = queryVectors.ToList(),
+                TopK = 10,
+                IncludeMetadata = true,
+                IncludeValues = false
             });
 
             RestResponse response = await RestClient.ExecuteAsync(request);
+            var result = JsonConvert.DeserializeObject<PineconeQueryResponse>(response.Content);
 
-            return response;
+            return result != null ? result : new PineconeQueryResponse();
         }
     }
 }

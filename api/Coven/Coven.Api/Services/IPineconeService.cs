@@ -1,5 +1,6 @@
 ﻿using Coven.Data.DTO.AI;
 using Coven.Data.Entities;
+using Coven.Logic.Request_Models.Post;
 using RestSharp;
 
 namespace Coven.Api.Services
@@ -15,7 +16,7 @@ namespace Coven.Api.Services
         /// <returns></returns>
         Task<RestResponse> UpsertVectors(string worldtitle, string characterSet, float[] vectors);
         Task<RestResponse> UpsertVectors(string worldTitle, List<Embedding> embeddings);
-        Task<RestResponse> QueryPineconeIndex();
+        Task<PineconeQueryResponse> QueryPineconeIndex(string worldTitle, string query, float[] queryVectors);
         Task<float[]> GetVectors(string identifier);
     }
 }
