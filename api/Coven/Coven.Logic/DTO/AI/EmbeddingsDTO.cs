@@ -22,6 +22,6 @@ namespace Coven.Logic.DTO.AI
     public class Embedding
     {
         public string characterSet { get; set; }
-        public List<Data> vector { get; set; }
+        public List<OpenAI_API.Embedding.Data> vector { get; set; }
     }
 }
