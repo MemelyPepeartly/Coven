@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Coven.Logic.Request_Models.Post
 {
-    public class CreateClientRequestModel
+    public class CreateUserRequestModel
     {
         public string username { get; set; }
+        public string worldAnvilUsername { get; set; }
         public string email { get; set; }
     }
 }
