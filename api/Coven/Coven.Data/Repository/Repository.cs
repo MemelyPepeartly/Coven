@@ -100,7 +100,10 @@ namespace Coven.Data.Repository
         {
             try
             {
-                return await CovenContext.Users.ToListAsync();
+                return await CovenContext.Users
+                    .Include(x => x.WacharacterSets)
+                        .ThenInclude(x => x.Waembeddings)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
