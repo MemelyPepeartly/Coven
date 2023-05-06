@@ -1,7 +1,10 @@
 ﻿using Coven.Api.Services;
 using Coven.Data.DTO.AI;
+using Coven.Data.Pinecone;
 using Coven.Data.Repository;
+using Coven.Logic.Base_Types;
 using Coven.Logic.DTO.WorldAnvil;
+using Coven.Logic.Meta_Objects;
 using Coven.Logic.Request_Models.get;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +18,7 @@ namespace Coven.Api.Controllers
     [ApiController]
     public class AIController : ControllerBase
     {
-        private readonly OpenAIAPI _openAIAPI;
+        private readonly OpenAIAPI OpenAIClient;
         private readonly IConfiguration _config;
 
         private readonly IRepository Repository;
@@ -28,30 +31,38 @@ namespace Coven.Api.Controllers
             IPineconeService _pinecone)
         {
             _config = config;
-            _openAIAPI = new OpenAIAPI(_config["OPENAI_API_KEY"]);
+            OpenAIClient = new OpenAIAPI(_config["OpenAIAPIKey"]);
 
             Repository = _repository;
             WorldAnvilService = _worldAnvilService;
             PineconeService = _pinecone;
         }
 
-
-        [HttpPost("AddEmbeddings")]
-        public async Task<ActionResult> AddEmbeddings(Guid userId, Guid worldId)
+        [HttpPost("AddArticleEmbeddings")]
+        public async Task<ActionResult> AddArticleEmbeddings(Guid userId, Guid worldId)
         {
-            WorldArticlesSummary world = await WorldAnvilService.GetWorldArticlesSummary(worldId);
-            List<string> articleTitles = world.articles
-                .Select(s => s.title)
-                .ToList();
+            List<ArticleMeta> worldArticleMetaList = await WorldAnvilService.GetArticleMetas(worldId);
 
             List<Embedding> embeddings = new List<Embedding>();
-            foreach (string title in articleTitles)
+
+            // Foreach article, get the embedding and add it to the list
+            foreach (ArticleMeta meta in worldArticleMetaList)
             {
-                EmbeddingResult embedding = await _openAIAPI.Embeddings.CreateEmbeddingAsync(title);
+                Article article = await WorldAnvilService.GetArticle(meta.id);
+                List<float> articleVectors = await PineconeService.GetVectorsFromArticle(article);
+
                 embeddings.Add(new Embedding()
                 {
-                    characterSet = title,
-                    vectors = embedding.Data.SelectMany(v => v.Embedding).ToArray()
+                    characterSet = article.title,
+                    vectors = articleVectors.ToArray(),
+                    metadata = new ArticleMetadata()
+                    {
+                        worldId = worldId.ToString(),
+                        articleId = meta.id.ToString(),
+                        Title = meta.title,
+                        ArticleType = meta.templateType,
+                        Author = meta.author.username,
+                    }
                 });
             }
             while(embeddings.Count > 0)
@@ -61,7 +72,7 @@ namespace Coven.Api.Controllers
 
                 foreach (var embedding in embeddings.Take(batchSize))
                 {
-                    await PineconeService.UpsertVectors(world.world.title, embeddings);
+                    await PineconeService.UpsertVectors(, embeddings);
                 }
 
                 embeddings.RemoveRange(0, batchSize);
