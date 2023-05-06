@@ -74,7 +74,7 @@ namespace Coven.Api.Services
                 Namespace = worldTitle,
                 Vectors = embeddings.Select(e => new Vector()
                 {
-                    Id = e.characterSet,
+                    Id = e.identifier,
                     Values = e.vectors.ToList(),
                     Metadata = e.metadata
                 }).ToList()

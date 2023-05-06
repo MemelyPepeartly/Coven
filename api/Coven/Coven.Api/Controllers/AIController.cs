@@ -42,7 +42,7 @@ namespace Coven.Api.Controllers
         public async Task<ActionResult> AddArticleEmbeddings(Guid userId, Guid worldId)
         {
             List<ArticleMeta> worldArticleMetaList = await WorldAnvilService.GetArticleMetas(worldId);
-
+            WorldSegment worldSegment = await WorldAnvilService.GetWorld(worldId);
             List<Embedding> embeddings = new List<Embedding>();
 
             // Foreach article, get the embedding and add it to the list
@@ -53,7 +53,7 @@ namespace Coven.Api.Controllers
 
                 embeddings.Add(new Embedding()
                 {
-                    characterSet = article.title,
+                    identifier = article.title,
                     vectors = articleVectors.ToArray(),
                     metadata = new ArticleMetadata()
                     {
@@ -72,7 +72,7 @@ namespace Coven.Api.Controllers
 
                 foreach (var embedding in embeddings.Take(batchSize))
                 {
-                    await PineconeService.UpsertVectors(, embeddings);
+                    await PineconeService.UpsertVectors(worldSegment.name, embeddings);
                 }
 
                 embeddings.RemoveRange(0, batchSize);

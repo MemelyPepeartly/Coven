@@ -22,7 +22,7 @@ namespace Coven.Data.DTO.AI
 
     public class Embedding
     {
-        public string characterSet { get; set; }
+        public string identifier { get; set; }
         public float[] vectors { get; set; }
         public PineconeMetadata metadata { get; set; }
     }
