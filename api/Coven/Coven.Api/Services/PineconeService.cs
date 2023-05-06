@@ -66,9 +66,32 @@ namespace Coven.Api.Services
             return response.IsSuccessful;
         }
 
+        public async Task<bool> UpsertVectors(string worldTitle, Embedding embedding)
+        {
+            var request = CreateRequest("vectors/upsert", Method.Post);
+
+            request.AddJsonBody<UpsertRequest>(new UpsertRequest()
+            {
+                Namespace = worldTitle,
+                Vectors = new List<Vector>()
+                {
+                    new Vector()
+                    {
+                        Id = embedding.identifier,
+                        Values = embedding.vectors.ToList(),
+                        Metadata = embedding.metadata
+                    }
+                }
+            });
+
+            RestResponse response = await RestClient.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
+
         public async Task<bool> UpsertVectors(string worldTitle, List<Embedding> embeddings)
         {
-            var request = CreateRequest("upsert", Method.Post);
+            var request = CreateRequest("vectors/upsert", Method.Post);
             request.AddJsonBody<UpsertRequest>(new UpsertRequest()
             {
                 Namespace = worldTitle,
@@ -92,7 +115,7 @@ namespace Coven.Api.Services
             {
                 Namespace = worldTitle,
                 Vector = queryVectors.ToList(),
-                TopK = 10,
+                TopK = 25,
                 IncludeMetadata = true,
                 IncludeValues = false
             });

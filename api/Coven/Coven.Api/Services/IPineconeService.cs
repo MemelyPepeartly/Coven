@@ -12,11 +12,12 @@ namespace Coven.Api.Services
         /// <summary>
         /// Upserts a vector into a Pinecone index using worldtitle as a namespace, characterSet as the string of characters the vectors are for, and a float index of vectors.
         /// </summary>
-        /// <param name="worldtitle"></param>
+        /// <param name="worldTitle"></param>
         /// <param name="vectorId"></param>
         /// <param name="vectors"></param>
         /// <returns></returns>
         Task<bool> UpsertVectors(string worldTitle, string vectorId, float[] vectors, PineconeMetadata customMetadata);
+        Task<bool> UpsertVectors(string worldTitle, Embedding embedding);
         Task<bool> UpsertVectors(string worldTitle, List<Embedding> embeddings);
         Task<PineconeQueryResponse> QueryPineconeIndex(string worldTitle, string query, float[] queryVectors);
         Task<float[]> GetVectors(string identifier);
