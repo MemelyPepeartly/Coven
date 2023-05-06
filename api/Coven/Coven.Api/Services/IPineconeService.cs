@@ -1,5 +1,7 @@
 ﻿using Coven.Data.DTO.AI;
 using Coven.Data.Entities;
+using Coven.Data.Pinecone;
+using Coven.Logic.Base_Types;
 using Coven.Logic.Request_Models.Post;
 using RestSharp;
 
@@ -11,12 +13,25 @@ namespace Coven.Api.Services
         /// Upserts a vector into a Pinecone index using worldtitle as a namespace, characterSet as the string of characters the vectors are for, and a float index of vectors.
         /// </summary>
         /// <param name="worldtitle"></param>
-        /// <param name="characterSet"></param>
+        /// <param name="vectorId"></param>
         /// <param name="vectors"></param>
         /// <returns></returns>
-        Task<RestResponse> UpsertVectors(string worldtitle, string characterSet, float[] vectors);
-        Task<RestResponse> UpsertVectors(string worldTitle, List<Embedding> embeddings);
+        Task<bool> UpsertVectors(string worldTitle, string vectorId, float[] vectors, PineconeMetadata customMetadata);
+        Task<bool> UpsertVectors(string worldTitle, List<Embedding> embeddings);
         Task<PineconeQueryResponse> QueryPineconeIndex(string worldTitle, string query, float[] queryVectors);
         Task<float[]> GetVectors(string identifier);
+
+        Task<bool> DeleteAllVectorsFromNamespace(string worldTitle);
+
+        #region utility
+        string RemoveHtmlTags(string input);
+        List<string> SplitStringIntoChunks(string input);
+        /// <summary>
+        /// Gets a list of vectors from a potentially large string by splitting it into chunks and getting the embeddings for each chunk.
+        /// </summary>
+        /// <param name="article"></param>
+        /// <returns></returns>
+        Task<List<float>> GetVectorsFromArticle(Article article);
+        #endregion
     }
 }
