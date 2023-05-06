@@ -18,9 +18,9 @@ namespace Coven.Logic.Meta_Objects
 
     }
     /// <summary>
-    /// World meta type for user world calls
+    /// Another segment type for world meta
     /// </summary>
-    public class UserWorldMeta
+    public class WorldSegment
     {
         public Guid id { get; set; }
         public string name { get; set; }
