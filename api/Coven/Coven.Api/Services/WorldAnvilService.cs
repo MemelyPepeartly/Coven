@@ -46,13 +46,13 @@ namespace Coven.Api.Services
             return article;
         }
 
-        public async Task<WorldsSummary> GetWorlds()
+        public async Task<WorldSegment> GetWorlds()
         {
-            WorldsSummary worlds = new WorldsSummary();
+            WorldSegment worlds = new WorldSegment();
             HttpResponseMessage response = await client.GetAsync($"user/{(await GetUser()).id}/worlds");
             if (response.IsSuccessStatusCode)
             {
-                worlds = await response.Content.ReadAsAsync<WorldsSummary>();
+                worlds = await response.Content.ReadAsAsync<WorldSegment>();
             }
             return worlds;
         }
