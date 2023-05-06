@@ -84,10 +84,11 @@ namespace Coven.Api.Services
             List<ArticleMeta> articles = new List<ArticleMeta>();
 
             bool moreExists = true;
-            int page = 1;
+            int page = 0;
             while(moreExists)
             {
-                HttpResponseMessage response = await client.GetAsync($"world/{worldId}/articles?offset={page * 50}");
+                var offset = page == 0 ? 0 : page * 50;
+                HttpResponseMessage response = await client.GetAsync($"world/{worldId}/articles?offset={offset}");
                 if (response.IsSuccessStatusCode)
                 {
                     summary = await response.Content.ReadAsAsync<WorldArticlesSummary>();
