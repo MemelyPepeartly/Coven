@@ -7,23 +7,23 @@ CREATE TABLE app.[User]
     email NVARCHAR(50) NOT NULL UNIQUE,
     worldAnvilUsername NVARCHAR(50) NOT NULL UNIQUE
 );
-CREATE TABLE app.[WASnippet]
+CREATE TABLE app.[World]
 (
-    snippetId UNIQUEIDENTIFIER PRIMARY KEY,
+    worldId UNIQUEIDENTIFIER PRIMARY KEY,
     userId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES app.[User](userId) NOT NULL,
-    worldAnvilArticleId UNIQUEIDENTIFIER NOT NULL,
-    title NVARCHAR(50) NOT NULL,
-    content NVARCHAR(MAX) NOT NULL
+    worldName NVARCHAR(100) NOT NULL
 );
-CREATE TABLE app.[WACharacterSet]
+CREATE TABLE app.[PineconeVectorMetadata]
 (
-    characterSetId UNIQUEIDENTIFIER PRIMARY KEY,
-    userId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES app.[User](userId) NOT NULL,
-    characterSet NVARCHAR(MAX) NOT NULL
+    entryId UNIQUEIDENTIFIER PRIMARY KEY,
+    worldId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES app.[World](worldId) NOT NULL,
+    articleId UNIQUEIDENTIFIER NOT NULL,
+    characterString NVARCHAR(1000) NOT NULL
 );
-CREATE TABLE app.[WAEmbedding]
-(
-    embeddingId UNIQUEIDENTIFIER PRIMARY KEY,
-    characterSetId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES app.[WACharacterSet](characterSetId) NOT NULL,
-    vector VARBINARY(MAX) NOT NULL
-);
+
+
+-- DROP TABLE app.[WAEmbedding];
+-- DROP TABLE app.[WACharacterSet];
+-- DROP TABLE app.[WASnippet];
+-- DROP TABLE app.[User];
+-- DROP SCHEMA app;
