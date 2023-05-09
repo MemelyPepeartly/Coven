@@ -30,12 +30,5 @@ namespace Coven.Api.Controllers
         {
             return Ok(await Repository.CreateUser(model.username, model.worldAnvilUsername, model.email));
         }
-
-        [HttpGet("{userId}/GetExistingUserEmbeddings")]
-        public async Task<ActionResult> GetExistingUserEmbeddings(Guid userId)
-        {
-#warning This isn't working yet
-            return Ok(await Repository.GetUserEmbeddings(userId));
-        }
     }
 }
