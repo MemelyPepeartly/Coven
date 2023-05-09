@@ -1,4 +1,5 @@
-﻿using Coven.Data.DTO.AI;
+﻿using Coven.Data.AI;
+using Coven.Data.DTO.AI;
 using Coven.Data.Entities;
 using Coven.Data.Pinecone;
 using Coven.Logic.Base_Types;
@@ -42,7 +43,7 @@ namespace Coven.Api.Services
         /// </summary>
         /// <param name="article"></param>
         /// <returns></returns>
-        Task<List<float>> GetVectorsFromArticle(Article article);
+        Task<List<SentenceVectorDTO>> GetVectorsFromArticle(Article article);
         #endregion
     }
 }

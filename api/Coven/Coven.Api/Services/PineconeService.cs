@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Coven.Data.AI;
 using Coven.Data.DTO.AI;
 using Coven.Data.Entities;
 using Coven.Data.Pinecone;
@@ -69,7 +70,6 @@ namespace Coven.Api.Services
         public async Task<bool> UpsertVectors(string worldTitle, Embedding embedding)
         {
             var request = CreateRequest("vectors/upsert", Method.Post);
-
             request.AddJsonBody<UpsertRequest>(new UpsertRequest()
             {
                 Namespace = worldTitle,
@@ -189,16 +189,16 @@ namespace Coven.Api.Services
             return sentences;
         }
 
-        public async Task<List<float>> GetVectorsFromArticle(Article article)
+        public async Task<List<SentenceVectorDTO>> GetVectorsFromArticle(Article article)
         {
             List<string> articleSections = SplitStringIntoSentences(RemoveHtmlTags(article.contentParsed));
 
-            List<float> sentenceVectors = new List<float>();
+            List<SentenceVectorDTO> sentenceVectors = new List<SentenceVectorDTO>();
 
             foreach (var sentence in articleSections)
             {
-                sentenceVectors.AddRange((await OpenAIClient.Embeddings.CreateEmbeddingAsync(sentence)).Data
-                    .SelectMany(v => v.Embedding));
+                var vector = (await OpenAIClient.Embeddings.CreateEmbeddingAsync(sentence)).Data.SelectMany(v => v.Embedding).ToList();
+                sentenceVectors.Add(new SentenceVectorDTO { Sentence = sentence, Vector = vector });
             }
             return sentenceVectors;
         }
