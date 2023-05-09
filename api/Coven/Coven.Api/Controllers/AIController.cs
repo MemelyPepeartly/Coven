@@ -1,4 +1,5 @@
 ﻿using Coven.Api.Services;
+using Coven.Data.AI;
 using Coven.Data.DTO.AI;
 using Coven.Data.Pinecone;
 using Coven.Data.Repository;
@@ -39,7 +40,7 @@ namespace Coven.Api.Controllers
         }
 
         /// <summary>
-        /// Adds the embeddings for all articles in a world to Pinecone
+        /// Adds the embeddings for all WA articles in a world to Pinecone
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="worldId"></param>
@@ -68,21 +69,22 @@ namespace Coven.Api.Controllers
                     });
                     continue;
                 }
-                List<float> articleVectors = await PineconeService.GetVectorsFromArticle(article);
+                List<SentenceVectorDTO> articleVectors = await PineconeService.GetVectorsFromArticle(article);
 
-                embeddings.Add(new Embedding()
+                foreach (SentenceVectorDTO entry in articleVectors)
                 {
-                    identifier = article.title,
-                    vectors = articleVectors.ToArray(),
-                    metadata = new ArticleMetadata()
+                    embeddings.Add(new Embedding()
                     {
-                        worldId = worldId.ToString(),
-                        articleId = meta.id.ToString(),
-                        Title = meta.title,
-                        ArticleType = meta.templateType,
-                        Author = meta.author.username,
-                    }
-                });
+                        identifier = Guid.NewGuid().ToString(),
+                        vectors = entry.Vector.ToArray(),
+                        metadata = new ArticleMetadata()
+                        {
+                            WorldId = worldId.ToString(),
+                            ArticleId = meta.id.ToString(),
+                            CharacterString = entry.Sentence
+                        }
+                    });
+                }
             }
             List<Embedding> ExceededSizeEmbeddings = embeddings.Where(x => x.vectors.Length > 1536).ToList();
             embeddings.RemoveAll(x => ExceededSizeEmbeddings.Contains(x));
@@ -101,35 +103,41 @@ namespace Coven.Api.Controllers
                 // Create a separate list for the current batch
                 List<Embedding> batch = embeddings.Take(batchSize).ToList();
 
-                foreach (Embedding embedding in batch)
-                {
-                    var success = await PineconeService.UpsertVectors(worldSegment.name, embedding);
+                // Upload the batch
+                bool success = await PineconeService.UpsertVectors(worldSegment.name, batch);
 
-                    // Remove any embeddings that failed to upload and add them to the failed list for the response
-                    if (!success)
+                // Take any batches that failed and add them to the failed report
+                if (!success)
+                {
+                    articleReport.AddRange(batch.Select(e => new EmbedReport()
                     {
-                        articleReport.Add(new EmbedReport()
-                        {
-                            identifier = embedding.identifier,
-                            success = false,
-                            message = "Failed to upload embedding"
-                        });
-                    }
-                    else
+                        identifier = e.identifier,
+                        success = false,
+                        message = "Failed to upload embedding"
+                    }));
+                }
+                // Else any successful ones get marked as successful
+                else
+                {
+                    articleReport.AddRange(batch.Select(e => new EmbedReport()
                     {
-                        articleReport.Add(new EmbedReport()
-                        {
-                            identifier = embedding.identifier,
-                            success = true,
-                            message = "Embedding uploaded successfully"
-                        });
-                    }
+                        identifier = e.identifier,
+                        success = true,
+                        message = "Embedding uploaded successfully"
+                    }));
                 }
 
                 embeddings.RemoveRange(0, batchSize);
             }
 
-            return Ok(articleReport);
+            return Ok(new
+            {
+                succeededOperationsCount = articleReport.Where(x => x.success).Count(),
+                failedOperationsCount = articleReport.Where(x => !x.success).Count(),
+                succeededOperations = articleReport.Where(x => x.success),
+                failedOperations = articleReport.Where(x => !x.success),
+                totalReport = articleReport
+            });
         }
     }
 
