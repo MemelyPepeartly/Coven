@@ -31,18 +31,40 @@ namespace Tardigrade.Api.Controllers
             return Ok(await WorldAnvilService.GetUser());
         }
 
+        [HttpGet("GetWorldArticles/{articleId}")]
+        public async Task<ActionResult> GetWorldArticle(Guid articleId)
+        {
+            return Ok(await WorldAnvilService.GetArticle(articleId));
+        }
+
+        /// <summary>
+        /// Syncs the worldanvil world list for a coven user and adds it to the user's world database list
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("SyncWorlds")]
+        public async Task<ActionResult> SyncWorlds(Guid userId)
+        {
+            WorldSegmentSummary worlds = await WorldAnvilService.GetWorlds();
+
+            // Adds all the worlds to the database
+            var success = await Repository.CreateWorlds(userId, worlds.worlds);
+
+            if(success)
+            {
+                return Ok(await Repository.GetWorlds(userId));
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpGet("{worldId}/GetWorldArticleSummary")]
         public async Task<ActionResult> GetWorldArticleSummary(Guid worldId)
         {
             WorldArticlesSummary result = await WorldAnvilService.GetWorldArticlesSummary(worldId);
             result.articles = result.articles.OrderBy(a => a.title).ToList();
             return Ok(result);
-        }
-
-        [HttpGet("GetWorldArticles/{articleId}")]
-        public async Task<ActionResult> GetWorldArticle(Guid articleId)
-        {
-            return Ok(await WorldAnvilService.GetArticle(articleId));
         }
 
         [HttpGet("{worldId}/GetWorldArticleMetas")]
