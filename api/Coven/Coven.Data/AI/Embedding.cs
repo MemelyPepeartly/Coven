@@ -13,6 +13,6 @@ namespace Coven.Data.DTO.AI
     {
         public string identifier { get; set; }
         public float[] vectors { get; set; }
-        public PineconeMetadata metadata { get; set; }
+        public ArticleMetadata metadata { get; set; }
     }
 }
