@@ -17,15 +17,20 @@ namespace Coven.Data.Pinecone
 
     public class ArticleMetadata : PineconeMetadata
     {
+        /// <summary>
+        /// Id of the worldanvil world associated with the pinecone entry.
+        /// </summary>
         [JsonProperty("worldId")]
-        public string worldId { get; set; }
+        public string WorldId { get; set; }
+        /// <summary>
+        /// Id of the worldanvil article associated with the pinecone entry.
+        /// </summary>
         [JsonProperty("articleId")]
-        public string articleId { get; set; }
-        [JsonProperty("title")]
-        public string Title { get; set; }
-        [JsonProperty("author")]
-        public string Author { get; set; }
-        [JsonProperty("articleType")]
-        public string ArticleType { get; set; }
+        public string ArticleId { get; set; }
+        /// <summary>
+        /// String of characters that created the vector associated with the pinecone entry.
+        /// </summary>
+        [JsonProperty("characterString")]
+        public string CharacterString { get; set; }
     }
 }
