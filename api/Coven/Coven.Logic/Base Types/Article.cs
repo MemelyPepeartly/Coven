@@ -1,4 +1,5 @@
-﻿using Coven.Logic.DTO.WorldAnvil;
+﻿using Coven.Data.Meta_Objects;
+using Coven.Logic.DTO.WorldAnvil;
 using Coven.Logic.Meta_Objects;
 using System;
 using System.Collections.Generic;
@@ -32,13 +33,6 @@ namespace Coven.Logic.Base_Types
         public object sections { get; set; }
         public object relations  { get; set; }
         public string fullRender { get; set; }
-
-    }
-    public class WorldAnvilDateDTO
-    {
-        public DateTime date { get; set; }
-        public int timezoneType { get; set; }
-        public string timezone { get; set; }
 
     }
 }

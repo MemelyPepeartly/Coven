@@ -24,7 +24,7 @@ namespace Coven.Api.Services
         {
             _config = config;
             OpenAIClient = new OpenAIAPI(_config["OpenAIAPIKey"]);
-            RestClient = new RestClient(_config["PineconeAppUri"]);
+            RestClient = new RestClient($"https://{_config["PineconeAppUri"]}");
         }
 
         public Task<float[]> GetVectors(string identifier)
