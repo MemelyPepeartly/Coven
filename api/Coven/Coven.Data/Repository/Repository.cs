@@ -1,5 +1,6 @@
 ﻿using Coven.Data.DTO.AI;
 using Coven.Data.Entities;
+using Coven.Data.Pinecone;
 using Microsoft.EntityFrameworkCore;
 using OpenAI_API.Embedding;
 using System;
@@ -45,28 +46,16 @@ namespace Coven.Data.Repository
             }
         }
 
-        public async Task<bool> CreateEmbeddings(Guid userId, string characterSet, float[] vectors)
+        public async Task<bool> CreatePineconeMetadataEntry(Guid userId, Guid pineconeIdentifier, ArticleMetadata metadata)
         {
             try
             {
-                Guid characterId = Guid.NewGuid();
-
-                await CovenContext.WacharacterSets.AddAsync(new WacharacterSet()
+                await CovenContext.PineconeVectorMetadata.AddAsync(new PineconeVectorMetadatum()
                 {
-                    CharacterSetId = characterId,
-                    CharacterSet = characterSet,
-                    UserId = userId
-                });
-                await CovenContext.SaveChangesAsync();
-
-                byte[] byteArray = new byte[vectors.Length * sizeof(float)];
-                Buffer.BlockCopy(vectors, 0, byteArray, 0, byteArray.Length);
-
-                await CovenContext.Waembeddings.AddAsync(new Waembedding()
-                {
-                    EmbeddingId = Guid.NewGuid(),
-                    CharacterSetId = characterId,
-                    Vector = byteArray
+                    EntryId = pineconeIdentifier,
+                    WorldId = Guid.Parse(metadata.WorldId),
+                    ArticleId = Guid.Parse(metadata.ArticleId),
+                    CharacterString = metadata.CharacterString,
                 });
 
                 await CovenContext.SaveChangesAsync();
@@ -87,8 +76,6 @@ namespace Coven.Data.Repository
             try
             {
                 return await CovenContext.Users
-                    .Include(x => x.WacharacterSets)
-                        .ThenInclude(x => x.Waembeddings)
                     .FirstAsync(x => x.UserId == userId);
             }
             catch (Exception ex)
@@ -102,8 +89,6 @@ namespace Coven.Data.Repository
             try
             {
                 return await CovenContext.Users
-                    .Include(x => x.WacharacterSets)
-                        .ThenInclude(x => x.Waembeddings)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -132,20 +117,13 @@ namespace Coven.Data.Repository
             }
         }
 
-        public async Task<List<WACharacterSetDTO>> GetUserEmbeddings(Guid userId)
+        public async Task<List<PineconeVectorMetadatum>> GetWorldPineconeMetadatum(Guid worldId)
         {
             try
             {
-                return await CovenContext.WacharacterSets
-                    .Include(x => x.Waembeddings)
-                    .Where(x => x.UserId == userId)
-                        .SelectMany(x => x.Waembeddings)
-                        .Select(e => new WACharacterSetDTO()
-                        {
-                            characterSet = e.CharacterSet.CharacterSet,
-                            vectors = ByteArrayToFloatArray(e.Vector)
-                        })
-                        .ToListAsync();
+                return await CovenContext.PineconeVectorMetadata
+                    .Where(m => m.WorldId == worldId)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
