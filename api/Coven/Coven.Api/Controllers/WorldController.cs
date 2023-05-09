@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Coven.Api.Services;
 using Coven.Logic.DTO.WorldAnvil;
+using Coven.Data.Repository;
 
 namespace Tardigrade.Api.Controllers
 {
@@ -10,10 +11,12 @@ namespace Tardigrade.Api.Controllers
     public class WorldController : ControllerBase
     {
         private readonly IWorldAnvilService WorldAnvilService;
+        private readonly IRepository Repository;
 
-        public WorldController(IWorldAnvilService _worldAnvilService)
+        public WorldController(IWorldAnvilService _worldAnvilService, IRepository _repository)
         {
             WorldAnvilService = _worldAnvilService;
+            Repository = _repository;
         }
 
         [HttpGet("GetWorldInfo")]
@@ -46,6 +49,12 @@ namespace Tardigrade.Api.Controllers
         public async Task<ActionResult> GetWorldArticleMetas(Guid worldId)
         {
             return Ok(await WorldAnvilService.GetArticleMetas(worldId));
+        }
+
+        [HttpGet("{worldId}/GetPineconeMetadata")]
+        public async Task<ActionResult> GetPineconeMetadata(Guid worldId)
+        {
+            return Ok(await Repository.GetWorldPineconeMetadatum(worldId));
         }
     }
 }
