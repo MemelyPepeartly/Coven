@@ -1,8 +1,11 @@
 ﻿using Coven.Api.Services;
+using Coven.Data.AI;
+using Coven.Data.DTO.AI;
 using Coven.Data.Pinecone;
 using Coven.Data.Repository;
 using Coven.Logic.Base_Types;
 using Coven.Logic.DTO.WorldAnvil;
+using Coven.Logic.Meta_Objects;
 using Coven.Logic.Request_Models.Post;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -49,30 +52,7 @@ namespace Coven.Api.Controllers
         [HttpPost("AddArticleSnippet")]
         public async Task<ActionResult> AddArticleSnippet([FromBody] CreateVectorsFromArticleModel model)
         {
-            Article article = await WorldAnvilService.GetArticle(model.articleId);
-            string articleWithoutHtml = PineconeService.RemoveHtmlTags(article.contentParsed);
-
-            ArticleMetadata articleMetadata = new ArticleMetadata()
-            {
-                articleId = article.id.ToString(),
-                worldId = article.world.id.ToString(),
-                Title = article.world.title,
-                Author = article.author.username != null ? article.author.username : "author",
-                ArticleType = article.template
-            };
-
-            // There is a character token limit of 8192 for the OpenAI API
-            List<float> chunkVectors = await PineconeService.GetVectorsFromArticle(article);
-
-            // Pinecone has a max vector dimensionality of 20,000
-            if (chunkVectors.Count > 20000)
-            {
-                throw new NotImplementedException("Too many chunks man");
-            }
-            else
-            {
-                return Ok(await PineconeService.UpsertVectors(article.world.title, article.title, chunkVectors.ToArray(), articleMetadata));
-            }
+            throw new NotImplementedException();
         }
 
         [HttpDelete("RemoveWorldVectors")]
