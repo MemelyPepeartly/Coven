@@ -159,34 +159,48 @@ namespace Coven.Api.Services
             return htmlTagPattern.Replace(input, string.Empty);
         }
 
-        public List<string> SplitStringIntoChunks(string input)
+        public List<string> SplitStringIntoSentences(string input)
         {
-            int maxTokenLength = 8191;
+            var sentences = new List<string>();
+            var sentenceBoundaries = new Regex(@"(?<=[\.!\?])\s+(?=[A-Z])");
+            var tokenLimit = 4097;
 
-            int maxChunkLength = maxTokenLength * 3; // Using 3 characters per token for safety
-            List<string> chunks = new List<string>();
+            // Split the input string into sentences based on the sentence boundaries.
+            var sentenceList = sentenceBoundaries.Split(input).ToList();
 
-            for (int i = 0; i < input.Length; i += maxChunkLength)
+            foreach (var sentence in sentenceList)
             {
-                int length = Math.Min(maxChunkLength, input.Length - i);
-                chunks.Add(input.Substring(i, length));
+                // Calculate the number of tokens in the current sentence.
+                int tokens = (int)Math.Ceiling(sentence.Length / 3.0);
+
+                if (tokens <= tokenLimit)
+                {
+                    sentences.Add(sentence);
+                }
+                else
+                {
+                    // If the sentence exceeds the token limit, truncate it.
+                    int charsToKeep = tokenLimit * 3;
+                    string truncatedSentence = sentence.Substring(0, charsToKeep);
+                    sentences.Add(truncatedSentence);
+                }
             }
 
-            return chunks;
+            return sentences;
         }
 
         public async Task<List<float>> GetVectorsFromArticle(Article article)
         {
-            List<string> articleChunks = SplitStringIntoChunks(RemoveHtmlTags(article.contentParsed));
+            List<string> articleSections = SplitStringIntoSentences(RemoveHtmlTags(article.contentParsed));
 
-            List<float> chunkVectors = new List<float>();
+            List<float> sentenceVectors = new List<float>();
 
-            foreach (var chunk in articleChunks)
+            foreach (var sentence in articleSections)
             {
-                chunkVectors.AddRange((await OpenAIClient.Embeddings.CreateEmbeddingAsync(chunk)).Data
+                sentenceVectors.AddRange((await OpenAIClient.Embeddings.CreateEmbeddingAsync(sentence)).Data
                     .SelectMany(v => v.Embedding));
             }
-            return chunkVectors;
+            return sentenceVectors;
         }
         #endregion
     }

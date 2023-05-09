@@ -25,8 +25,18 @@ namespace Coven.Api.Services
         Task<bool> DeleteAllVectorsFromNamespace(string worldTitle);
 
         #region utility
+        /// <summary>
+        /// Removes HTML tags from a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         string RemoveHtmlTags(string input);
-        List<string> SplitStringIntoChunks(string input);
+        /// <summary>
+        /// Takes a large string input and splits it into sentences. The sentences will not exceed the max length for tokens using the OpenAI API.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        List<string> SplitStringIntoSentences(string input);
         /// <summary>
         /// Gets a list of vectors from a potentially large string by splitting it into chunks and getting the embeddings for each chunk.
         /// </summary>
