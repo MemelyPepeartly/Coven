@@ -9,17 +9,6 @@ using OpenAI_API.Embedding;
 
 namespace Coven.Data.DTO.AI
 {
-    public class EmbeddingsDTO
-    {
-        public EmbeddingsDTO() { 
-            queryEmbeddings = new List<Embedding>();
-            worldEmbeddings = new List<Embedding>();
-        }
-
-        public List<Embedding> queryEmbeddings { get; set; }
-        public List<Embedding> worldEmbeddings { get; set; }
-    }
-
     public class Embedding
     {
         public string identifier { get; set; }
