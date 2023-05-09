@@ -1,6 +1,7 @@
 ﻿using Coven.Data.DTO.AI;
 using Coven.Data.Entities;
 using Coven.Data.Pinecone;
+using Coven.Logic.Meta_Objects;
 using OpenAI_API.Embedding;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,9 @@ namespace Coven.Data.Repository
         #region Create
         Task<User> CreateUser(string username, string worldAnvilUsername, string email);
         Task<bool> CreatePineconeMetadataEntry(Guid userId, Guid pineconeIdentifier, ArticleMetadata metadata);
+        Task<bool> CreatePineconeMetadataEntries(Guid userId, List<Embedding> embeddingsData);
+        Task<bool> CreateWorld(Guid userId, WorldSegment WAWorldSegment);
+        Task<bool> CreateWorlds(Guid userId, List<WorldSegment> WAWorldSegments);
         #endregion
 
         #region Read
@@ -22,6 +26,7 @@ namespace Coven.Data.Repository
         Task<List<User>> GetUsers();
         Task<List<UserDTO>> GetDTOUsers();
         Task<List<PineconeVectorMetadatum>> GetWorldPineconeMetadatum(Guid worldId);
+        Task<List<World>> GetWorlds(Guid userId);
         #endregion
 
         #region Update

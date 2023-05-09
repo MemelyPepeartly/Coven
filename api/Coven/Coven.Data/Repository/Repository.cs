@@ -1,6 +1,7 @@
 ﻿using Coven.Data.DTO.AI;
 using Coven.Data.Entities;
 using Coven.Data.Pinecone;
+using Coven.Logic.Meta_Objects;
 using Microsoft.EntityFrameworkCore;
 using OpenAI_API.Embedding;
 using System;
@@ -58,14 +59,60 @@ namespace Coven.Data.Repository
                     CharacterString = metadata.CharacterString,
                 });
 
-                await CovenContext.SaveChangesAsync();
-
-                return true;
+                return await SaveAsync();
             }
             catch(Exception ex)
             {
                 throw;
             }
+        }
+
+        public async Task<bool> CreatePineconeMetadataEntries(Guid userId, List<Embedding> embeddingsData)
+        {
+            try
+            {
+                foreach (Embedding embedding in embeddingsData)
+                {
+                    await CovenContext.PineconeVectorMetadata.AddAsync(new PineconeVectorMetadatum()
+                    {
+                        EntryId = Guid.Parse(embedding.identifier),
+                        WorldId = Guid.Parse(embedding.metadata.WorldId),
+                        ArticleId = Guid.Parse(embedding.metadata.ArticleId),
+                        CharacterString = embedding.metadata.CharacterString,
+                    });
+                }
+                return await SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> CreateWorld(Guid userId, WorldSegment WAWorldSegment)
+        {
+            await CovenContext.Worlds.AddAsync(new World()
+            {
+                WorldId = WAWorldSegment.id,
+                UserId = userId,
+                WorldName = WAWorldSegment.name
+            });
+
+            return await SaveAsync();
+        }
+
+        public async Task<bool> CreateWorlds(Guid userId, List<WorldSegment> WAWorldSegments)
+        {
+            foreach (WorldSegment worldSegment in WAWorldSegments)
+            {
+                await CovenContext.Worlds.AddAsync(new World()
+                {
+                    WorldId = worldSegment.id,
+                    UserId = userId,
+                    WorldName = worldSegment.name
+                });
+            }
+            return await SaveAsync();
         }
 
         #endregion
@@ -130,6 +177,20 @@ namespace Coven.Data.Repository
                 throw;
             }
         }
+
+        public async Task<List<World>> GetWorlds(Guid userId)
+        {
+            try
+            {
+                return await CovenContext.Worlds
+                    .Where(w => w.UserId == userId)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
         #endregion
 
         #region Update
@@ -148,13 +209,6 @@ namespace Coven.Data.Repository
             {
                 throw;
             }
-        }
-
-        public static float[] ByteArrayToFloatArray(byte[] byteArray)
-        {
-            float[] floatArray = new float[byteArray.Length / sizeof(float)];
-            Buffer.BlockCopy(byteArray, 0, floatArray, 0, byteArray.Length);
-            return floatArray;
         }
     }
 }
