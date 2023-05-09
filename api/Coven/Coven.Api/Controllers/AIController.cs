@@ -119,6 +119,9 @@ namespace Coven.Api.Controllers
                 // Else any successful ones get marked as successful
                 else
                 {
+#warning Could make a failsafe here to delete the entries if the database update fails
+                    await Repository.CreatePineconeMetadataEntries(userId, batch);
+
                     articleReport.AddRange(batch.Select(e => new EmbedReport()
                     {
                         identifier = e.identifier,
