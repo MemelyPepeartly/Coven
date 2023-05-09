@@ -13,7 +13,5 @@ public partial class User
 
     public string WorldAnvilUsername { get; set; } = null!;
 
-    public virtual ICollection<WacharacterSet> WacharacterSets { get; set; } = new List<WacharacterSet>();
-
-    public virtual ICollection<Wasnippet> Wasnippets { get; set; } = new List<Wasnippet>();
+    public virtual ICollection<World> Worlds { get; set; } = new List<World>();
 }
