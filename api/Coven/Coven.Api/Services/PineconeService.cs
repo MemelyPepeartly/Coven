@@ -151,7 +151,7 @@ namespace Coven.Api.Services
         public string RemoveBBCodeAndExtraSpaces(string input)
         {
             // Remove BBCode
-            var bbCodeRegex = new Regex(@"\[(\w+)(?:[^\]])*]([^\[]*)\[/\1]", RegexOptions.Singleline);
+            var bbCodeRegex = new Regex(@"\[(\w+)(?:[^\]])*](.*?)(\[/\1]|\[/\w+])", RegexOptions.Singleline);
             var stringWithoutBBCode = bbCodeRegex.Replace(input, string.Empty);
 
             // Remove single BBCode tags (without closing tags) and self-closing tags
@@ -171,6 +171,7 @@ namespace Coven.Api.Services
 
             return stringWithoutBBCode;
         }
+
 
         public List<string> SplitStringIntoSentences(string input)
         {
