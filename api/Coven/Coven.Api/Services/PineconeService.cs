@@ -172,7 +172,6 @@ namespace Coven.Api.Services
             return stringWithoutBBCode;
         }
 
-
         public List<string> SplitStringIntoSentences(string input)
         {
             var sentences = new List<string>();
@@ -211,6 +210,11 @@ namespace Coven.Api.Services
 
             foreach (var sentence in articleSections)
             {
+                if(sentence.Length < 3)
+                {
+                    continue;
+                }
+
                 var vector = (await OpenAIClient.Embeddings.CreateEmbeddingAsync(sentence)).Data.SelectMany(v => v.Embedding).ToList();
                 sentenceVectors.Add(new SentenceVectorDTO { Sentence = sentence, Vector = vector });
             }
