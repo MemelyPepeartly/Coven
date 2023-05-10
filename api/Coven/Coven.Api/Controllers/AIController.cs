@@ -59,7 +59,7 @@ namespace Coven.Api.Controllers
             foreach (ArticleMeta meta in worldArticleMetaList)
             {
                 Article article = await WorldAnvilService.GetArticle(meta.id);
-                if (string.IsNullOrEmpty(article.contentParsed))
+                if (string.IsNullOrEmpty(article.content))
                 {
                     articleReport.Add(new EmbedReport()
                     {
