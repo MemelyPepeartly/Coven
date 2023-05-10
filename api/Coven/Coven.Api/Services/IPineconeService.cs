@@ -27,11 +27,17 @@ namespace Coven.Api.Services
 
         #region utility
         /// <summary>
-        /// Removes HTML tags from a string.
+        /// Removes BBCode tags from a string.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        string RemoveHtmlTags(string input);
+        string RemoveBBCode(string input);
+        /// <summary>
+        /// Removes consecutive spaces and newlines from a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        string RemoveConsecutiveSpacesAndNewlines(string input);
         /// <summary>
         /// Takes a large string input and splits it into sentences. The sentences will not exceed the max length for tokens using the OpenAI API.
         /// </summary>

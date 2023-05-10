@@ -148,15 +148,26 @@ namespace Coven.Api.Services
         }
 
         #region utility
-        public string RemoveHtmlTags(string input)
+        public string RemoveBBCode(string input)
         {
-            if (string.IsNullOrEmpty(input))
-            {
-                return string.Empty;
-            }
+            // Regular expression pattern to match BBCode tags
+            string pattern = @"\[(\w+)[^\]]*](.*?)\[/\1]";
 
-            var htmlTagPattern = new Regex("<[^>]*>");
-            return htmlTagPattern.Replace(input, string.Empty);
+            // Replace BBCode tags with an empty string
+            string result = Regex.Replace(input, pattern, "", RegexOptions.Singleline);
+
+            return result;
+        }
+
+        public string RemoveConsecutiveSpacesAndNewlines(string input)
+        {
+            // Replace consecutive spaces greater than 4 with a single space
+            input = Regex.Replace(input, @" {4,}", " ");
+
+            // Replace combinations of '\n' and '\r' with a single space
+            input = Regex.Replace(input, @"(\n|\r)+", " ");
+
+            return input;
         }
 
         public List<string> SplitStringIntoSentences(string input)
@@ -191,7 +202,8 @@ namespace Coven.Api.Services
 
         public async Task<List<SentenceVectorDTO>> GetVectorsFromArticle(Article article)
         {
-            List<string> articleSections = SplitStringIntoSentences(RemoveHtmlTags(article.contentParsed));
+            string withoutBBCode = RemoveBBCode(article.content);
+            List<string> articleSections = SplitStringIntoSentences(RemoveConsecutiveSpacesAndNewlines(withoutBBCode));
 
             List<SentenceVectorDTO> sentenceVectors = new List<SentenceVectorDTO>();
 
