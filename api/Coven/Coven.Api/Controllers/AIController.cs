@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpenAI_API;
 using OpenAI_API.Embedding;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace Coven.Api.Controllers
@@ -50,58 +51,78 @@ namespace Coven.Api.Controllers
         {
             List<ArticleMeta> worldArticleMetaList = await WorldAnvilService.GetArticleMetas(worldId);
             WorldSegment worldSegment = await WorldAnvilService.GetWorld(worldId);
-            List<Embedding> embeddings = new List<Embedding>();
+            ConcurrentBag<Embedding> embeddingsBag = new ConcurrentBag<Embedding>();
 
-            List<Embedding> failedEmbeddings = new List<Embedding>();
-            List<EmbedReport> articleReport = new List<EmbedReport>();
+            ConcurrentBag<EmbedReport> articleReportBag = new ConcurrentBag<EmbedReport>();
 
-            // Foreach article, get the embedding and add it to the list
-            foreach (ArticleMeta meta in worldArticleMetaList)
+            int maxDegreeOfParallelism = 10;
+            SemaphoreSlim throttler = new SemaphoreSlim(maxDegreeOfParallelism);
+
+            // Run tasks in parallel to process articles, limited by the semaphore
+            var articleProcessingTasks = worldArticleMetaList.Select(async meta =>
             {
-                Article article = await WorldAnvilService.GetArticle(meta.id);
-                if (string.IsNullOrEmpty(article.content))
-                {
-                    articleReport.Add(new EmbedReport()
-                    {
-                        success = false,
-                        identifier = article.title,
-                        message = "Article has no content"
-                    });
-                    continue;
-                }
-                List<SentenceVectorDTO> articleVectors = await PineconeService.GetVectorsFromArticle(article);
+                await throttler.WaitAsync();
 
-                foreach (SentenceVectorDTO entry in articleVectors)
+                try
                 {
-                    embeddings.Add(new Embedding()
+                    Article article = await WorldAnvilService.GetArticle(meta.id);
+                    if (string.IsNullOrEmpty(article.content))
                     {
-                        identifier = Guid.NewGuid().ToString(),
-                        vectors = entry.Vector.ToArray(),
-                        metadata = new ArticleMetadata()
+                        articleReportBag.Add(new EmbedReport()
                         {
-                            WorldId = worldId.ToString(),
-                            ArticleId = meta.id.ToString(),
-                            CharacterString = entry.Sentence
-                        }
-                    });
-                }
-            }
-            List<Embedding> ExceededSizeEmbeddings = embeddings.Where(x => x.vectors.Length > 1536).ToList();
-            embeddings.RemoveAll(x => ExceededSizeEmbeddings.Contains(x));
-            articleReport.AddRange(ExceededSizeEmbeddings.Select(e => new EmbedReport()
-            {
-                identifier = e.identifier,
-                success = false,
-                message = "Embedding size exceeded 1536"
-            }));
+                            success = false,
+                            identifier = article.title,
+                            message = "Article has no content"
+                        });
+                        return;
+                    }
+                    List<SentenceVectorDTO> articleVectors = await PineconeService.GetVectorsFromArticle(article);
 
-            while (embeddings.Count > 0)
+                    foreach (SentenceVectorDTO entry in articleVectors)
+                    {
+                        embeddingsBag.Add(new Embedding()
+                        {
+                            identifier = Guid.NewGuid().ToString(),
+                            vectors = entry.Vector.ToArray(),
+                            metadata = new ArticleMetadata()
+                            {
+                                WorldId = worldId.ToString(),
+                                ArticleId = meta.id.ToString(),
+                                CharacterString = entry.Sentence
+                            }
+                        });
+                    }
+                }
+                finally
+                {
+                    throttler.Release();
+                }
+            });
+
+            await Task.WhenAll(articleProcessingTasks);
+
+            List<Embedding> ExceededSizeEmbeddings = embeddingsBag.Where(x => x.vectors.Length > 1536).ToList();
+            embeddingsBag = new ConcurrentBag<Embedding>(embeddingsBag.Where(x => !ExceededSizeEmbeddings.Contains(x)));
+            foreach (var e in ExceededSizeEmbeddings)
+            {
+                articleReportBag.Add(new EmbedReport()
+                {
+                    identifier = e.identifier,
+                    success = false,
+                    message = "Embedding size exceeded 1536"
+                });
+            }
+
+            List<EmbedReport> articleReportList = articleReportBag.ToList();
+            List<Embedding> embeddingsList = embeddingsBag.ToList();
+
+            while (embeddingsBag.Count > 0)
             {
                 // Pinecone has a limit of 250 vectors per request
-                int batchSize = Math.Min(250, embeddings.Count);
+                int batchSize = Math.Min(250, embeddingsList.Count);
 
                 // Create a separate list for the current batch
-                List<Embedding> batch = embeddings.Take(batchSize).ToList();
+                List<Embedding> batch = embeddingsList.Take(batchSize).ToList();
 
                 // Upload the batch
                 bool success = await PineconeService.UpsertVectors(worldSegment.name, batch);
@@ -109,7 +130,7 @@ namespace Coven.Api.Controllers
                 // Take any batches that failed and add them to the failed report
                 if (!success)
                 {
-                    articleReport.AddRange(batch.Select(e => new EmbedReport()
+                    articleReportList.AddRange(batch.Select(e => new EmbedReport()
                     {
                         identifier = e.identifier,
                         success = false,
@@ -122,7 +143,7 @@ namespace Coven.Api.Controllers
 #warning Could make a failsafe here to delete the entries if the database update fails
                     await Repository.CreatePineconeMetadataEntries(userId, batch);
 
-                    articleReport.AddRange(batch.Select(e => new EmbedReport()
+                    articleReportList.AddRange(batch.Select(e => new EmbedReport()
                     {
                         identifier = e.identifier,
                         success = true,
@@ -130,16 +151,16 @@ namespace Coven.Api.Controllers
                     }));
                 }
 
-                embeddings.RemoveRange(0, batchSize);
+                embeddingsList.RemoveRange(0, batchSize);
             }
 
             return Ok(new
             {
-                succeededOperationsCount = articleReport.Where(x => x.success).Count(),
-                failedOperationsCount = articleReport.Where(x => !x.success).Count(),
-                succeededOperations = articleReport.Where(x => x.success),
-                failedOperations = articleReport.Where(x => !x.success),
-                totalReport = articleReport
+                succeededOperationsCount = articleReportList.Where(x => x.success).Count(),
+                failedOperationsCount = articleReportList.Where(x => !x.success).Count(),
+                succeededOperations = articleReportList.Where(x => x.success),
+                failedOperations = articleReportList.Where(x => !x.success),
+                totalReport = articleReportList
             });
         }
     }
