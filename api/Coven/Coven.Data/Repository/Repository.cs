@@ -91,26 +91,39 @@ namespace Coven.Data.Repository
 
         public async Task<bool> CreateWorld(Guid userId, WorldSegment WAWorldSegment)
         {
-            await CovenContext.Worlds.AddAsync(new World()
+            // if a world with the same id doesn't exist, create it
+            if(!(await CovenContext.Worlds.AnyAsync(w => w.WorldId == WAWorldSegment.id)))
             {
-                WorldId = WAWorldSegment.id,
-                UserId = userId,
-                WorldName = WAWorldSegment.name
-            });
+                await CovenContext.Worlds.AddAsync(new World()
+                {
+                    WorldId = WAWorldSegment.id,
+                    UserId = userId,
+                    WorldName = WAWorldSegment.name
+                });
 
-            return await SaveAsync();
+                return await SaveAsync();
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public async Task<bool> CreateWorlds(Guid userId, List<WorldSegment> WAWorldSegments)
         {
+            List<World> worlds = await CovenContext.Worlds.Where(w => w.UserId == userId).ToListAsync();
             foreach (WorldSegment worldSegment in WAWorldSegments)
             {
-                await CovenContext.Worlds.AddAsync(new World()
+                // if a world with the same id doesn't exist, create it
+                if (!worlds.Any(w => w.WorldId == worldSegment.id))
                 {
-                    WorldId = worldSegment.id,
-                    UserId = userId,
-                    WorldName = worldSegment.name
-                });
+                    await CovenContext.Worlds.AddAsync(new World()
+                    {
+                        WorldId = worldSegment.id,
+                        UserId = userId,
+                        WorldName = worldSegment.name
+                    });
+                }
             }
             return await SaveAsync();
         }
