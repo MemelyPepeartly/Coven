@@ -148,26 +148,28 @@ namespace Coven.Api.Services
         }
 
         #region utility
-        public string RemoveBBCode(string input)
+        public string RemoveBBCodeAndExtraSpaces(string input)
         {
-            // Regular expression pattern to match BBCode tags
-            string pattern = @"\[(\w+)[^\]]*](.*?)\[/\1]";
+            // Remove BBCode
+            var bbCodeRegex = new Regex(@"\[(\w+)(?:[^\]])*]([^\[]*)\[/\1]", RegexOptions.Singleline);
+            var stringWithoutBBCode = bbCodeRegex.Replace(input, string.Empty);
 
-            // Replace BBCode tags with an empty string
-            string result = Regex.Replace(input, pattern, "", RegexOptions.Singleline);
+            // Remove single BBCode tags (without closing tags) and self-closing tags
+            var singleTagRegex = new Regex(@"\[(\w+)(?:[^\]])*](?!.*\[/\1])|\[.*?/]", RegexOptions.Singleline);
+            stringWithoutBBCode = singleTagRegex.Replace(stringWithoutBBCode, string.Empty);
 
-            return result;
-        }
+            // Replace multiple spaces with a single space
+            var multipleSpacesRegex = new Regex(@" {2,}", RegexOptions.Singleline);
+            stringWithoutBBCode = multipleSpacesRegex.Replace(stringWithoutBBCode, " ");
 
-        public string RemoveConsecutiveSpacesAndNewlines(string input)
-        {
-            // Replace consecutive spaces greater than 4 with a single space
-            input = Regex.Replace(input, @" {4,}", " ");
+            // Remove multiple newline characters
+            var newLineRegex = new Regex(@"(\r?\n){2,}", RegexOptions.Singleline);
+            stringWithoutBBCode = newLineRegex.Replace(stringWithoutBBCode, "\n");
 
-            // Replace combinations of '\n' and '\r' with a single space
-            input = Regex.Replace(input, @"(\n|\r)+", " ");
+            // Remove leading and trailing whitespaces
+            stringWithoutBBCode = stringWithoutBBCode.Trim();
 
-            return input;
+            return stringWithoutBBCode;
         }
 
         public List<string> SplitStringIntoSentences(string input)
@@ -202,8 +204,7 @@ namespace Coven.Api.Services
 
         public async Task<List<SentenceVectorDTO>> GetVectorsFromArticle(Article article)
         {
-            string withoutBBCode = RemoveBBCode(article.content);
-            List<string> articleSections = SplitStringIntoSentences(RemoveConsecutiveSpacesAndNewlines(withoutBBCode));
+            List<string> articleSections = SplitStringIntoSentences(RemoveBBCodeAndExtraSpaces(article.content));
 
             List<SentenceVectorDTO> sentenceVectors = new List<SentenceVectorDTO>();
 
