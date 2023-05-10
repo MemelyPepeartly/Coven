@@ -18,12 +18,10 @@ CREATE TABLE app.[PineconeVectorMetadata]
     entryId UNIQUEIDENTIFIER PRIMARY KEY,
     worldId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES app.[World](worldId) NOT NULL,
     articleId UNIQUEIDENTIFIER NOT NULL,
-    characterString NVARCHAR(1000) NOT NULL
+    characterString NVARCHAR(MAX) NOT NULL
 );
 
 
--- DROP TABLE app.[WAEmbedding];
--- DROP TABLE app.[WACharacterSet];
--- DROP TABLE app.[WASnippet];
+-- DROP TABLE app.PineconeVectorMetadata;
 -- DROP TABLE app.[User];
 -- DROP SCHEMA app;

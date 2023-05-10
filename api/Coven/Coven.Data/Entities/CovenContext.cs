@@ -25,7 +25,7 @@ public partial class CovenContext : DbContext
     {
         modelBuilder.Entity<PineconeVectorMetadatum>(entity =>
         {
-            entity.HasKey(e => e.EntryId).HasName("PK__Pinecone__D124D3D5912348B8");
+            entity.HasKey(e => e.EntryId).HasName("PK__Pinecone__D124D3D5A22967E5");
 
             entity.ToTable("PineconeVectorMetadata", "app");
 
@@ -33,15 +33,13 @@ public partial class CovenContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("entryId");
             entity.Property(e => e.ArticleId).HasColumnName("articleId");
-            entity.Property(e => e.CharacterString)
-                .HasMaxLength(1000)
-                .HasColumnName("characterString");
+            entity.Property(e => e.CharacterString).HasColumnName("characterString");
             entity.Property(e => e.WorldId).HasColumnName("worldId");
 
             entity.HasOne(d => d.World).WithMany(p => p.PineconeVectorMetadata)
                 .HasForeignKey(d => d.WorldId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__PineconeV__world__1CBC4616");
+                .HasConstraintName("FK__PineconeV__world__1F98B2C1");
         });
 
         modelBuilder.Entity<User>(entity =>
