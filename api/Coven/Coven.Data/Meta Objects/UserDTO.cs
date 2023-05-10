@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Coven.Data.DTO.AI
+namespace Coven.Data.Meta_Objects
 {
     public class UserDTO
     {
@@ -16,5 +16,6 @@ namespace Coven.Data.DTO.AI
         public string Email { get; set; } = null!;
 
         public string WorldAnvilUsername { get; set; } = null!;
+        public List<WorldDTO> Worlds { get; set; } = new List<WorldDTO>();
     }
 }
