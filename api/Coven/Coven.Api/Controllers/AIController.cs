@@ -55,7 +55,7 @@ namespace Coven.Api.Controllers
 
             ConcurrentBag<EmbedReport> articleReportBag = new ConcurrentBag<EmbedReport>();
 
-            int maxDegreeOfParallelism = 10;
+            int maxDegreeOfParallelism = 4;
             SemaphoreSlim throttler = new SemaphoreSlim(maxDegreeOfParallelism);
 
             // Run tasks in parallel to process articles, limited by the semaphore
@@ -116,7 +116,7 @@ namespace Coven.Api.Controllers
             List<EmbedReport> articleReportList = articleReportBag.ToList();
             List<Embedding> embeddingsList = embeddingsBag.ToList();
 
-            while (embeddingsBag.Count > 0)
+            while (embeddingsList.Count > 0)
             {
                 // Pinecone has a limit of 250 vectors per request
                 int batchSize = Math.Min(250, embeddingsList.Count);
