@@ -1,5 +1,6 @@
 ﻿using Coven.Data.DTO.AI;
 using Coven.Data.Entities;
+using Coven.Data.Meta_Objects;
 using Coven.Data.Pinecone;
 using Coven.Logic.Meta_Objects;
 using Microsoft.EntityFrameworkCore;
@@ -167,7 +168,13 @@ namespace Coven.Data.Repository
                         UserId = u.UserId,
                         Username = u.Username,
                         Email = u.Email,
-                        WorldAnvilUsername = u.WorldAnvilUsername
+                        WorldAnvilUsername = u.WorldAnvilUsername,
+                        Worlds = u.Worlds.Select(w => new WorldDTO()
+                        {
+                            WorldId = w.WorldId,
+                            WorldName = w.WorldName,
+                            UserId = w.UserId
+                        }).ToList()
                     })
                     .ToListAsync();
             }

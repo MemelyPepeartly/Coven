@@ -1,5 +1,6 @@
 ﻿using Coven.Data.DTO.AI;
 using Coven.Data.Entities;
+using Coven.Data.Meta_Objects;
 using Coven.Data.Pinecone;
 using Coven.Logic.Meta_Objects;
 using OpenAI_API.Embedding;
