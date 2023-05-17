@@ -51,66 +51,63 @@ namespace Coven.Api.Controllers
         {
             List<ArticleMeta> worldArticleMetaList = await WorldAnvilService.GetArticleMetas(worldId);
             WorldSegment worldSegment = await WorldAnvilService.GetWorld(worldId);
-            ConcurrentBag<Embedding> embeddingsBag = new ConcurrentBag<Embedding>();
 
+            ConcurrentBag<Embedding> embeddingsBag = new ConcurrentBag<Embedding>();
             ConcurrentBag<EmbedReport> articleReportBag = new ConcurrentBag<EmbedReport>();
 
-            int maxDegreeOfParallelism = 4;
-            SemaphoreSlim throttler = new SemaphoreSlim(maxDegreeOfParallelism);
-
-            // Run tasks in parallel to process articles, limited by the semaphore
+            // Run tasks in parallel to process articles
             var articleProcessingTasks = worldArticleMetaList.Select(async meta =>
             {
-                await throttler.WaitAsync();
-
-                try
+                Article article = await WorldAnvilService.GetArticle(meta.id);
+                if (string.IsNullOrEmpty(article.content))
                 {
-                    Article article = await WorldAnvilService.GetArticle(meta.id);
-                    if (string.IsNullOrEmpty(article.content))
+                    articleReportBag.Add(new EmbedReport()
                     {
-                        articleReportBag.Add(new EmbedReport()
-                        {
-                            success = false,
-                            identifier = article.title,
-                            message = "Article has no content"
-                        });
-                        return;
-                    }
-                    List<SentenceVectorDTO> articleVectors = await PineconeService.GetVectorsFromArticle(article);
-
-                    foreach (SentenceVectorDTO entry in articleVectors)
-                    {
-                        embeddingsBag.Add(new Embedding()
-                        {
-                            identifier = Guid.NewGuid().ToString(),
-                            vectors = entry.Vector.ToArray(),
-                            metadata = new ArticleMetadata()
-                            {
-                                WorldId = worldId.ToString(),
-                                ArticleId = meta.id.ToString(),
-                                CharacterString = entry.Sentence
-                            }
-                        });
-                    }
+                        success = false,
+                        identifier = article.title,
+                        message = "Article has no content"
+                    });
+                    return;
                 }
-                finally
+                List<SentenceVectorDTO> articleVectors = await PineconeService.GetVectorsFromArticle(article);
+
+                foreach (SentenceVectorDTO entry in articleVectors)
                 {
-                    throttler.Release();
+                    embeddingsBag.Add(new Embedding()
+                    {
+                        identifier = Guid.NewGuid().ToString(),
+                        vectors = entry.Vector.ToArray(),
+                        metadata = new ArticleMetadata()
+                        {
+                            WorldId = worldId.ToString(),
+                            ArticleId = meta.id.ToString(),
+                            CharacterString = entry.Sentence
+                        }
+                    });
                 }
             });
 
-            await Task.WhenAll(articleProcessingTasks);
+            try
+            {
+                await Task.WhenAll(articleProcessingTasks);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+            
 
             List<Embedding> ExceededSizeEmbeddings = embeddingsBag.Where(x => x.vectors.Length > 1536).ToList();
             embeddingsBag = new ConcurrentBag<Embedding>(embeddingsBag.Where(x => !ExceededSizeEmbeddings.Contains(x)));
-            foreach (var e in ExceededSizeEmbeddings)
+            foreach (var e in ExceededSizeEmbeddings.Select(e => new EmbedReport()
             {
-                articleReportBag.Add(new EmbedReport()
-                {
-                    identifier = e.identifier,
-                    success = false,
-                    message = "Embedding size exceeded 1536"
-                });
+                identifier = e.identifier,
+                success = false,
+                message = "Embedding size exceeded 1536"
+            }))
+            {
+                articleReportBag.Add(e);
             }
 
             List<EmbedReport> articleReportList = articleReportBag.ToList();
