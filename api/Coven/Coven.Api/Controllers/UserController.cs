@@ -19,6 +19,7 @@ namespace Coven.Api.Controllers
             WorldAnvilService = _worldAnvilService;
             Repository = _repository;
         }
+#warning to be deprecated
         [HttpGet("GetAllUsers")]
         public async Task<ActionResult> GetAllUsers()
         {
