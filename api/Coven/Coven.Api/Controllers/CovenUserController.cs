@@ -9,12 +9,12 @@ namespace Coven.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class CovenUserController : ControllerBase
     {
         private readonly IWorldAnvilService WorldAnvilService;
         private readonly IRepository Repository;
 
-        public UserController(IWorldAnvilService _worldAnvilService, IRepository _repository)
+        public CovenUserController(IWorldAnvilService _worldAnvilService, IRepository _repository)
         {
             WorldAnvilService = _worldAnvilService;
             Repository = _repository;
