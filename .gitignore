@@ -1,12 +1,8 @@
-## angular
-coverage/
-dist/
-
-## docker
+## docker ignores
 dockerup*
 !dockerup.yaml
 
-## dotnet
+## dotnet specific ignores
 .vscode/
 .vs/
 bin/
@@ -14,15 +10,3 @@ obj/
 
 appsettings.*
 !appsettings.json
-
-## jekyll
-.jekyll-cache/
-.sass-cache/
-
-.jekyll-metadata
-
-## macos
-.DS_Store
-
-## nodejs
-node_modules/
