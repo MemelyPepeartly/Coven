@@ -36,6 +36,13 @@ namespace Tardigrade.Api.Controllers
         {
             return Ok(await WorldAnvilService.GetArticle(articleId));
         }
+        [HttpGet("GetWorldArticleContent/{articleId}")]
+        public async Task<ActionResult<string>> GetWorldArticleContent(Guid articleId)
+        {
+            var article = await WorldAnvilService.GetArticle(articleId);
+            return Ok(article.content);
+        }
+
 
         /// <summary>
         /// Syncs the worldanvil world list for a coven user and adds it to the user's world database list
