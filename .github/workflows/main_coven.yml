@@ -51,11 +51,9 @@ jobs:
           name: .net-app
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'coven'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_73E47F683FE244638AB89F1441A06A72 }}
-          package: ${{env.API_PATH}}/publish
-
+          package: ./api/Coven/publish
