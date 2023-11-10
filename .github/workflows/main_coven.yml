@@ -57,4 +57,5 @@ jobs:
           app-name: 'coven'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_73E47F683FE244638AB89F1441A06A72 }}
-          package: .
+          package: ${{env.API_PATH}}/publish
+
