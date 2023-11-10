@@ -51,7 +51,7 @@ jobs:
           name: .net-app
 
       - name: List contents of the publish directory
-        run: ls ./api/Coven/publish
+        run: ls .
         
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -59,4 +59,4 @@ jobs:
           app-name: 'coven'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_73E47F683FE244638AB89F1441A06A72 }}
-          package: ./api/Coven/publish
+          package: .
