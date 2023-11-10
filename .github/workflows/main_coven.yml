@@ -24,12 +24,12 @@ jobs:
           dotnet-version: '6.0.x'
           include-prerelease: true
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
-
       - name: List contents of API_PATH
         run: ls -la ${{env.API_PATH}}
         shell: pwsh
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
 
       - name: dotnet publish
         run: dotnet publish ${API_PATH}/Coven.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
