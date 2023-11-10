@@ -36,6 +36,7 @@ namespace Tardigrade.Api.Controllers
         {
             return Ok(await WorldAnvilService.GetArticle(articleId));
         }
+
         [HttpGet("GetWorldArticleContent/{articleId}")]
         public async Task<ActionResult<string>> GetWorldArticleContent(Guid articleId)
         {
