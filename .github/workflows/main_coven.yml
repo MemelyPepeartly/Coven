@@ -50,6 +50,9 @@ jobs:
         with:
           name: .net-app
 
+      - name: List contents of the publish directory
+        run: ls ./api/Coven/publish
+        
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
