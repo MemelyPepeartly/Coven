@@ -25,7 +25,7 @@ jobs:
           include-prerelease: true
 
       - name: List contents of API_PATH
-        run: ls -la ${{env.API_PATH}}
+        run: ls ./api/Coven
         shell: pwsh
 
       - name: Build with dotnet
