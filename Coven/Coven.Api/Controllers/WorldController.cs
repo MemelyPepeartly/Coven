@@ -78,7 +78,13 @@ namespace Tardigrade.Api.Controllers
         [HttpGet("{worldId}/GetWorldArticleMetas")]
         public async Task<ActionResult> GetWorldArticleMetas(Guid worldId)
         {
-            return Ok(await WorldAnvilService.GetArticleMetas(worldId));
+            return Ok((await WorldAnvilService.GetArticleMetas(worldId)).Select(a => new
+            {
+                id = a.id,
+                title = a.title,
+                url = a.url,
+                author = a.author.username
+            }));
         }
 
         [HttpGet("{worldId}/GetPineconeMetadata")]
