@@ -90,7 +90,7 @@ public partial class CovenContext : DbContext
 
         modelBuilder.Entity<WorldContent>(entity =>
         {
-            entity.HasKey(e => e.WorldContentId).HasName("PK__WorldCon__45A7A34AB2685274");
+            entity.HasKey(e => e.WorldContentId).HasName("PK__WorldCon__45A7A34A303F830F");
 
             entity.ToTable("WorldContent", "app");
 
@@ -98,13 +98,22 @@ public partial class CovenContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("worldContentId");
             entity.Property(e => e.ArticleId).HasColumnName("articleId");
+            entity.Property(e => e.ArticleTitle)
+                .HasMaxLength(200)
+                .HasColumnName("articleTitle");
+            entity.Property(e => e.Author)
+                .HasMaxLength(200)
+                .HasColumnName("author");
             entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.WorldAnvilArticleType)
+                .HasMaxLength(200)
+                .HasColumnName("worldAnvilArticleType");
             entity.Property(e => e.WorldId).HasColumnName("worldId");
 
             entity.HasOne(d => d.World).WithMany(p => p.WorldContents)
                 .HasForeignKey(d => d.WorldId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WorldCont__world__3C34F16F");
+                .HasConstraintName("FK__WorldCont__world__44CA3770");
         });
 
         OnModelCreatingPartial(modelBuilder);
