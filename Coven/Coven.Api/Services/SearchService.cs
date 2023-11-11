@@ -2,16 +2,18 @@
 using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Models;
+using Coven.Api.Services.Schema;
+using System.Text.Json.Nodes;
 
 namespace Coven.Api.Services
 {
     public interface ISearchService
     {
+        Task<SearchResults<JsonObject>> SearchAsync(string searchText, SearchOptions options = null);
     }
     public class SearchService : ISearchService
     {
         private readonly SearchClient _searchClient;
-        private readonly SearchIndexClient _indexClient;
         private readonly string _indexName;
 
         public SearchService(IConfiguration configuration)
@@ -20,9 +22,25 @@ namespace Coven.Api.Services
             string adminApiKey = configuration["SearchServiceAdminApiKey"];
             _indexName = configuration["SearchServiceIndexName"];
 
-            string endpoint = $"https://{searchServiceName}.search.windows.net";
-            _searchClient = new SearchClient(new Uri(endpoint), _indexName, new AzureKeyCredential(adminApiKey));
-            _indexClient = new SearchIndexClient(new Uri(endpoint), new AzureKeyCredential(adminApiKey));
+            Uri endpoint = new Uri($"https://{searchServiceName}.search.windows.net/");
+            AzureKeyCredential credential = new AzureKeyCredential(adminApiKey);
+            _searchClient = new SearchClient(endpoint, _indexName, credential);
+        }
+
+        public async Task<SearchResults<JsonObject>> SearchAsync(string searchText, SearchOptions options = null)
+        {
+            options ??= new SearchOptions();
+            // Set default options here if needed
+
+            try
+            {
+                return await _searchClient.SearchAsync<JsonObject>(searchText, options);
+            }
+            catch (RequestFailedException e)
+            {
+                // Handle or log the exception as appropriate
+                throw;
+            }
         }
 
     }
