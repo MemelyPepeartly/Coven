@@ -26,6 +26,9 @@ namespace Coven.Logic.Base_Types
         public string tags { get; set; }
         public string url { get; set; }
         public Category category { get; set; }
+        /// <summary>
+        /// Username may not populate
+        /// </summary>
         public Author author { get; set; }
         public WorldMeta world { get; set; }
         public string content { get; set; }
