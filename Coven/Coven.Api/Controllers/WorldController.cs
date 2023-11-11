@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Coven.Api.Services;
-using Coven.Logic.DTO.WorldAnvil;
+﻿using Coven.Api.Services;
 using Coven.Data.Repository;
 using Coven.Logic.Base_Types;
+using Coven.Logic.DTO.WorldAnvil;
+using Coven.Logic.Meta_Objects;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Tardigrade.Api.Controllers
 {
@@ -11,37 +11,37 @@ namespace Tardigrade.Api.Controllers
     [ApiController]
     public class WorldController : ControllerBase
     {
-        private readonly IWorldAnvilService WorldAnvilService;
-        private readonly IRepository Repository;
+        private readonly IWorldAnvilService _worldAnvilService;
+        private readonly IRepository _repository;
 
-        public WorldController(IWorldAnvilService _worldAnvilService, IRepository _repository)
+        public WorldController(IWorldAnvilService worldAnvilService, IRepository repository)
         {
-            WorldAnvilService = _worldAnvilService;
-            Repository = _repository;
+            _worldAnvilService = worldAnvilService;
+            _repository = repository;
         }
 
         [HttpGet("GetWorldInfo")]
         public async Task<ActionResult> GetWorldInfo() 
         {
-            return Ok(await WorldAnvilService.GetWorlds());
+            return Ok(await _worldAnvilService.GetWorlds());
         }
 
         [HttpGet("GetAnvilUser")]
         public async Task<ActionResult> GetAnvilUser()
         {
-            return Ok(await WorldAnvilService.GetUser());
+            return Ok(await _worldAnvilService.GetUser());
         }
 
         [HttpGet("GetWorldArticles/{articleId}")]
         public async Task<ActionResult> GetWorldArticle(Guid articleId)
         {
-            return Ok(await WorldAnvilService.GetArticle(articleId));
+            return Ok(await _worldAnvilService.GetArticle(articleId));
         }
 
         [HttpGet("GetWorldArticleContent/{articleId}")]
         public async Task<ActionResult<string>> GetWorldArticleContent(Guid articleId)
         {
-            var article = await WorldAnvilService.GetArticle(articleId);
+            var article = await _worldAnvilService.GetArticle(articleId);
             return Ok(article.content);
         }
 
@@ -53,14 +53,14 @@ namespace Tardigrade.Api.Controllers
         [HttpPost("SyncWorlds")]
         public async Task<ActionResult> SyncWorlds(Guid userId)
         {
-            WorldSegmentSummary worlds = await WorldAnvilService.GetWorlds();
+            WorldSegmentSummary worlds = await _worldAnvilService.GetWorlds();
 
             // Adds all the worlds to the database
-            var success = await Repository.CreateWorlds(userId, worlds.worlds);
+            var success = await _repository.CreateWorlds(userId, worlds.worlds);
 
             if(success)
             {
-                return Ok(await Repository.GetWorlds(userId));
+                return Ok(await _repository.GetWorlds(userId));
             }
             else
             {
@@ -71,12 +71,12 @@ namespace Tardigrade.Api.Controllers
         [HttpPost("{worldId}/SyncWorldContentToDatabase")]
         public async Task<ActionResult> SyncWorldContentToDatabase(Guid worldId)
         {
-            var metas = await WorldAnvilService.GetArticleMetas(worldId);
+            List<ArticleMeta> metas = await _worldAnvilService.GetArticleMetas(worldId);
 
-            foreach(var meta in metas)
+            foreach(ArticleMeta meta in metas)
             {
-                Article article = await WorldAnvilService.GetArticle(meta.id);
-                await Repository.CreateWorldContentEntry(article);
+                Article article = await _worldAnvilService.GetArticle(meta.id);
+                await _repository.CreateWorldContentEntry(article.content, article.id, worldId);
             }
 
             return Ok();
@@ -85,7 +85,7 @@ namespace Tardigrade.Api.Controllers
         [HttpGet("{worldId}/GetWorldArticleSummary")]
         public async Task<ActionResult> GetWorldArticleSummary(Guid worldId)
         {
-            WorldArticlesSummary result = await WorldAnvilService.GetWorldArticlesSummary(worldId);
+            WorldArticlesSummary result = await _worldAnvilService.GetWorldArticlesSummary(worldId);
             result.articles = result.articles.OrderBy(a => a.title).ToList();
             return Ok(result);
         }
@@ -93,7 +93,7 @@ namespace Tardigrade.Api.Controllers
         [HttpGet("{worldId}/GetWorldArticleMetas")]
         public async Task<ActionResult> GetWorldArticleMetas(Guid worldId)
         {
-            return Ok((await WorldAnvilService.GetArticleMetas(worldId)).Select(a => new
+            return Ok((await _worldAnvilService.GetArticleMetas(worldId)).Select(a => new
             {
                 id = a.id,
                 title = a.title,

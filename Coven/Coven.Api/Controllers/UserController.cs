@@ -11,24 +11,24 @@ namespace Coven.Api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IWorldAnvilService WorldAnvilService;
-        private readonly IRepository Repository;
+        private readonly IWorldAnvilService _worldAnvilService;
+        private readonly IRepository _repository;
 
-        public UserController(IWorldAnvilService _worldAnvilService, IRepository _repository)
+        public UserController(IWorldAnvilService worldAnvilService, IRepository repository)
         {
-            WorldAnvilService = _worldAnvilService;
-            Repository = _repository;
+            _worldAnvilService = worldAnvilService;
+            _repository = repository;
         }
         [HttpGet("GetAllUsers")]
         public async Task<ActionResult> GetAllUsers()
         {
-            return Ok((await Repository.GetDTOUsers()));
+            return Ok((await _repository.GetDTOUsers()));
         }
 
         [HttpPost("CreateUser")]
         public async Task<ActionResult> CreateUser([FromBody] CreateUserRequestModel model)
         {
-            return Ok(await Repository.CreateUser(model.username, model.worldAnvilUsername, model.email));
+            return Ok(await _repository.CreateUser(model.username, model.worldAnvilUsername, model.email));
         }
     }
 }
