@@ -18,7 +18,7 @@ builder.Services.AddDbContext<CovenContext>(x => x.UseSqlServer(builder.Configur
 
 builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<IWorldAnvilService, WorldAnvilService>();
-builder.Services.AddScoped<IPineconeService, PineconeService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
 
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
 {
