@@ -1,5 +1,6 @@
 ﻿using Coven.Api.Services;
 using Coven.Data.Repository;
+using Coven.Data.Repository.Models;
 using Coven.Logic.Base_Types;
 using Coven.Logic.DTO.WorldAnvil;
 using Coven.Logic.Meta_Objects;
@@ -32,7 +33,7 @@ namespace Tardigrade.Api.Controllers
             return Ok(await _worldAnvilService.GetUser());
         }
 
-        [HttpGet("GetWorldArticles/{articleId}")]
+        [HttpGet("GetWorldArticle/{articleId}")]
         public async Task<ActionResult> GetWorldArticle(Guid articleId)
         {
             return Ok(await _worldAnvilService.GetArticle(articleId));
@@ -73,13 +74,23 @@ namespace Tardigrade.Api.Controllers
         {
             List<ArticleMeta> metas = await _worldAnvilService.GetArticleMetas(worldId);
 
+            var articleList = new List<IndexTableModel>();
+
             foreach(ArticleMeta meta in metas)
             {
                 Article article = await _worldAnvilService.GetArticle(meta.id);
-                await _repository.CreateWorldContentEntry(article.content, article.id, worldId);
+                articleList.Add(new IndexTableModel()
+                {
+                    worldId = worldId,
+                    articleId = article.id,
+                    articleTitle = article.title,
+                    worldAnvilArticleType = ArticleParser.GetArticleTypeFromUrl(article.url),
+                    author = metas.First(m => m.id == article.id).author.username,
+                    content = ArticleParser.RemoveBBCode(article.content)
+                });
             }
 
-            return Ok();
+            return Ok(await _repository.CreateWorldContentEntries(articleList));
         }
 
         [HttpGet("{worldId}/GetWorldArticleSummary")]
