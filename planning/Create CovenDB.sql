@@ -21,6 +21,14 @@ CREATE TABLE app.[PineconeVectorMetadata]
     characterString NVARCHAR(MAX) NOT NULL
 );
 
+CREATE TABLE app.[WorldContent]
+(
+    worldContentId UNIQUEIDENTIFIER PRIMARY KEY,
+    worldId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES app.[World](worldId) NOT NULL,
+    articleId UNIQUEIDENTIFIER NOT NULL,
+    content NVARCHAR(MAX)
+);
+
 
 -- DROP TABLE app.PineconeVectorMetadata;
 -- DROP TABLE app.[User];

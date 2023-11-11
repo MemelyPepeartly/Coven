@@ -21,6 +21,8 @@ public partial class CovenContext : DbContext
 
     public virtual DbSet<World> Worlds { get; set; }
 
+    public virtual DbSet<WorldContent> WorldContents { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PineconeVectorMetadatum>(entity =>
@@ -84,6 +86,25 @@ public partial class CovenContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__World__userId__19DFD96B");
+        });
+
+        modelBuilder.Entity<WorldContent>(entity =>
+        {
+            entity.HasKey(e => e.WorldContentId).HasName("PK__WorldCon__45A7A34AB2685274");
+
+            entity.ToTable("WorldContent", "app");
+
+            entity.Property(e => e.WorldContentId)
+                .ValueGeneratedNever()
+                .HasColumnName("worldContentId");
+            entity.Property(e => e.ArticleId).HasColumnName("articleId");
+            entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.WorldId).HasColumnName("worldId");
+
+            entity.HasOne(d => d.World).WithMany(p => p.WorldContents)
+                .HasForeignKey(d => d.WorldId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__WorldCont__world__3C34F16F");
         });
 
         OnModelCreatingPartial(modelBuilder);

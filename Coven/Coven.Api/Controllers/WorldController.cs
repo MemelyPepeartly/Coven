@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Coven.Api.Services;
 using Coven.Logic.DTO.WorldAnvil;
 using Coven.Data.Repository;
+using Coven.Logic.Base_Types;
 
 namespace Tardigrade.Api.Controllers
 {
@@ -67,6 +68,20 @@ namespace Tardigrade.Api.Controllers
             }
         }
 
+        [HttpPost("{worldId}/SyncWorldContentToDatabase")]
+        public async Task<ActionResult> SyncWorldContentToDatabase(Guid worldId)
+        {
+            var metas = await WorldAnvilService.GetArticleMetas(worldId);
+
+            foreach(var meta in metas)
+            {
+                Article article = await WorldAnvilService.GetArticle(meta.id);
+                await Repository.CreateWorldContentEntry(article);
+            }
+
+            return Ok();
+        }
+
         [HttpGet("{worldId}/GetWorldArticleSummary")]
         public async Task<ActionResult> GetWorldArticleSummary(Guid worldId)
         {
@@ -85,12 +100,6 @@ namespace Tardigrade.Api.Controllers
                 url = a.url,
                 author = a.author.username
             }));
-        }
-
-        [HttpGet("{worldId}/GetPineconeMetadata")]
-        public async Task<ActionResult> GetPineconeMetadata(Guid worldId)
-        {
-            return Ok(await Repository.GetWorldPineconeMetadatum(worldId));
         }
     }
 }
