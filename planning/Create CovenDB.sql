@@ -26,7 +26,10 @@ CREATE TABLE app.[WorldContent]
     worldContentId UNIQUEIDENTIFIER PRIMARY KEY,
     worldId UNIQUEIDENTIFIER FOREIGN KEY REFERENCES app.[World](worldId) NOT NULL,
     articleId UNIQUEIDENTIFIER NOT NULL,
-    content NVARCHAR(MAX)
+    worldAnvilArticleType NVARCHAR(200),
+    author NVARCHAR(200),
+    content NVARCHAR(MAX),
+    articleTitle NVARCHAR(200)
 );
 
 
