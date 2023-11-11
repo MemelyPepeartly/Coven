@@ -2,6 +2,7 @@
 using Coven.Data.Entities;
 using Coven.Data.Meta_Objects;
 using Coven.Data.Pinecone;
+using Coven.Data.Repository.Models;
 using Coven.Logic.Meta_Objects;
 using OpenAI_API.Embedding;
 using System;
@@ -20,7 +21,7 @@ namespace Coven.Data.Repository
         Task<bool> CreatePineconeMetadataEntries(Guid userId, List<Embedding> embeddingsData);
         Task<bool> CreateWorld(Guid userId, WorldSegment WAWorldSegment);
         Task<bool> CreateWorlds(Guid userId, List<WorldSegment> WAWorldSegments);
-        Task<bool> CreateWorldContentEntry(string content, Guid articleId, Guid worldId);
+        Task<bool> CreateWorldContentEntries(List<IndexTableModel> models);
         #endregion
 
         #region Read

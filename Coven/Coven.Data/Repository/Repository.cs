@@ -2,6 +2,7 @@
 using Coven.Data.Entities;
 using Coven.Data.Meta_Objects;
 using Coven.Data.Pinecone;
+using Coven.Data.Repository.Models;
 using Coven.Logic.Meta_Objects;
 using Microsoft.EntityFrameworkCore;
 using OpenAI_API.Embedding;
@@ -129,18 +130,51 @@ namespace Coven.Data.Repository
             return await SaveAsync();
         }
 
-        public async Task<bool> CreateWorldContentEntry(string content, Guid articleId, Guid worldId)
+        public async Task<bool> CreateWorldContentEntries(List<IndexTableModel> models)
         {
-            await CovenContext.WorldContents.AddAsync(new WorldContent()
+            // Begin a transaction
+            using (var transaction = await CovenContext.Database.BeginTransactionAsync())
             {
-                WorldContentId = Guid.NewGuid(),
-                Content =  content,
-                ArticleId = articleId,
-                WorldId = worldId
-            });
+                try
+                {
+                    List<WorldContent> newEntities = models.Select(m => new WorldContent()
+                    {
+                        WorldContentId = Guid.NewGuid(),
+                        ArticleTitle = m.articleTitle,
+                        WorldAnvilArticleType = m.worldAnvilArticleType,
+                        Author = m.author,
+                        Content = m.content,
+                        ArticleId = m.articleId,
+                        WorldId = m.worldId
+                    }).ToList();
 
-            return await SaveAsync();
+                    await CovenContext.WorldContents.AddRangeAsync(newEntities);
+
+                    // Attempt to save changes to the database
+                    var saveResult = await SaveAsync();
+
+                    // If the save was successful, commit the transaction
+                    if (saveResult)
+                    {
+                        await transaction.CommitAsync();
+                    }
+                    else
+                    {
+                        // If the save failed, the transaction will be rolled back implicitly
+                        // when the using block is exited and transaction is disposed
+                    }
+
+                    return saveResult;
+                }
+                catch (Exception)
+                {
+                    // In case of an exception, the transaction will be rolled back implicitly
+                    // when the using block is exited and transaction is disposed
+                    throw; // Re-throw the exception to handle it further up the call stack
+                }
+            }
         }
+
 
         #endregion
 
