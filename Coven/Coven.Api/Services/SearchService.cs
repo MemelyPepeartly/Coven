@@ -9,7 +9,7 @@ namespace Coven.Api.Services
 {
     public interface ISearchService
     {
-        Task<SearchResults<JsonObject>> SearchAsync(string searchText, SearchOptions options = null);
+        Task<SearchResults<SearchModel>> SearchAsync(string searchText, SearchOptions options = null);
     }
     public class SearchService : ISearchService
     {
@@ -27,14 +27,15 @@ namespace Coven.Api.Services
             _searchClient = new SearchClient(endpoint, _indexName, credential);
         }
 
-        public async Task<SearchResults<JsonObject>> SearchAsync(string searchText, SearchOptions options = null)
+        public async Task<SearchResults<SearchModel>> SearchAsync(string searchText, SearchOptions options = null)
         {
             options ??= new SearchOptions();
             // Set default options here if needed
 
             try
             {
-                return await _searchClient.SearchAsync<JsonObject>(searchText, options);
+
+                return await _searchClient.SearchAsync<SearchModel>(searchText, options);
             }
             catch (RequestFailedException e)
             {
