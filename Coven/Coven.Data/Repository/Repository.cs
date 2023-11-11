@@ -129,6 +129,19 @@ namespace Coven.Data.Repository
             return await SaveAsync();
         }
 
+        public async Task<bool> CreateWorldContentEntry(string content, Guid articleId, Guid worldId)
+        {
+            await CovenContext.WorldContents.AddAsync(new WorldContent()
+            {
+                WorldContentId = Guid.NewGuid(),
+                Content =  content,
+                ArticleId = articleId,
+                WorldId = worldId
+            });
+
+            return await SaveAsync();
+        }
+
         #endregion
 
         #region Read

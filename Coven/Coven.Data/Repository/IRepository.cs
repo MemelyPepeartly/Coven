@@ -20,7 +20,7 @@ namespace Coven.Data.Repository
         Task<bool> CreatePineconeMetadataEntries(Guid userId, List<Embedding> embeddingsData);
         Task<bool> CreateWorld(Guid userId, WorldSegment WAWorldSegment);
         Task<bool> CreateWorlds(Guid userId, List<WorldSegment> WAWorldSegments);
-        Task<bool> CreateWorldContentEntry(object article);
+        Task<bool> CreateWorldContentEntry(string content, Guid articleId, Guid worldId);
         #endregion
 
         #region Read
